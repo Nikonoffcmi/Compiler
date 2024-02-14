@@ -6,10 +6,46 @@
         xmlns:local="clr-namespace:Compiler"
         mc:Ignorable="d"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        Title="MainWindow" Height="450" Width="800">
-    
-    <Grid>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="248,200,0,0" VerticalAlignment="Top" Background="DarkBlue"/>
-
-    </Grid>
+        Title="Compiler" Height="450" Width="800">
+    <DockPanel>
+        <Menu DockPanel.Dock="Top" MaxHeight="30">
+            <MenuItem Header="Файл" Height="30" MaxHeight="30">
+                <MenuItem Header="Создать" Height="30" MaxHeight="30"></MenuItem>
+                <MenuItem Header="Открыть" Height="30" MaxHeight="30"></MenuItem>
+                <MenuItem Header="Сохранить" Height="30" MaxHeight="30"></MenuItem>
+                <MenuItem Header="Сохранить как" Height="30" MaxHeight="30"></MenuItem>
+                <MenuItem Header="Выход" Height="30" MaxHeight="30"></MenuItem>
+            </MenuItem>
+            <MenuItem Header="Правка" Height="30" MaxHeight="30">
+                <MenuItem Header="Отменить" Height="30" MaxHeight="30"></MenuItem>
+                <MenuItem Header="Повторить" Height="30" MaxHeight="30"></MenuItem>
+                <MenuItem Header="Вырезать" Height="30" MaxHeight="30"></MenuItem>
+                <MenuItem Header="Копировать" Height="30" MaxHeight="30"></MenuItem>
+                <MenuItem Header="Вставить" Height="30" MaxHeight="30"></MenuItem>
+                <MenuItem Header="Удалить" Height="30" MaxHeight="30"></MenuItem>
+                <MenuItem Header="Выделить все" Height="30" MaxHeight="30"></MenuItem>
+            </MenuItem>
+            <MenuItem Header="Текст" Height="30" MaxHeight="30">
+                <MenuItem Header="Постановка задачи" Height="30" MaxHeight="30"></MenuItem>
+                <MenuItem Header="Грамматика" Height="30" MaxHeight="30"></MenuItem>
+                <MenuItem Header="Классификация грамматики" Height="30" MaxHeight="30"></MenuItem>
+                <MenuItem Header="Метод анализа" Height="30" MaxHeight="30"></MenuItem>
+                <MenuItem Header="Диагностика и нейтрализация ошибок" Height="30" MaxHeight="30"></MenuItem>
+                <MenuItem Header="Тестовый пример" Height="30" MaxHeight="30"></MenuItem>
+                <MenuItem Header="Список литературы" Height="30" MaxHeight="30"></MenuItem>
+                <MenuItem Header="Исходный код программы" Height="30" MaxHeight="30"></MenuItem>
+            </MenuItem>
+            <MenuItem Header="Справка" Height="30" MaxHeight="30">
+                <MenuItem Header="Вызов справки" Height="30" MaxHeight="30"></MenuItem>
+                <MenuItem Header="О программе" Height="30" MaxHeight="30"></MenuItem>
+            </MenuItem>
+            <MenuItem Header="Пуск" Height="30" MaxHeight="30"></MenuItem>
+        </Menu>
+        <StatusBar DockPanel.Dock="Bottom"></StatusBar>
+        <!--<TabControl>
+            <TabItem>
+                
+            </TabItem>
+        </TabControl>-->
+    </DockPanel>
 </Window>
