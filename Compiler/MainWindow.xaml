@@ -3,49 +3,109 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
         xmlns:local="clr-namespace:Compiler"
         mc:Ignorable="d"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        Title="Compiler" Height="450" Width="800">
+        Title="Text editor" Height="450" Width="800">
     <DockPanel>
-        <Menu DockPanel.Dock="Top" MaxHeight="30">
-            <MenuItem Header="Файл" Height="30" MaxHeight="30">
-                <MenuItem Header="Создать" Height="30" MaxHeight="30"></MenuItem>
-                <MenuItem Header="Открыть" Height="30" MaxHeight="30"></MenuItem>
-                <MenuItem Header="Сохранить" Height="30" MaxHeight="30"></MenuItem>
-                <MenuItem Header="Сохранить как" Height="30" MaxHeight="30"></MenuItem>
-                <MenuItem Header="Выход" Height="30" MaxHeight="30"></MenuItem>
+        <Menu DockPanel.Dock="Top" MaxHeight="20">
+            <MenuItem Header="Файл" Height="20" MaxHeight="20" FontSize="13">
+                <MenuItem Header="Создать" Command="" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Открыть" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Сохранить" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Сохранить как" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Выход" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
             </MenuItem>
-            <MenuItem Header="Правка" Height="30" MaxHeight="30">
-                <MenuItem Header="Отменить" Height="30" MaxHeight="30"></MenuItem>
-                <MenuItem Header="Повторить" Height="30" MaxHeight="30"></MenuItem>
-                <MenuItem Header="Вырезать" Height="30" MaxHeight="30"></MenuItem>
-                <MenuItem Header="Копировать" Height="30" MaxHeight="30"></MenuItem>
-                <MenuItem Header="Вставить" Height="30" MaxHeight="30"></MenuItem>
-                <MenuItem Header="Удалить" Height="30" MaxHeight="30"></MenuItem>
-                <MenuItem Header="Выделить все" Height="30" MaxHeight="30"></MenuItem>
+            <MenuItem Header="Правка" Height="20" MaxHeight="20" FontSize="13">
+                <MenuItem Header="Отменить" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Повторить" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Вырезать" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Копировать" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Вставить" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Удалить" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Выделить все" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
             </MenuItem>
-            <MenuItem Header="Текст" Height="30" MaxHeight="30">
-                <MenuItem Header="Постановка задачи" Height="30" MaxHeight="30"></MenuItem>
-                <MenuItem Header="Грамматика" Height="30" MaxHeight="30"></MenuItem>
-                <MenuItem Header="Классификация грамматики" Height="30" MaxHeight="30"></MenuItem>
-                <MenuItem Header="Метод анализа" Height="30" MaxHeight="30"></MenuItem>
-                <MenuItem Header="Диагностика и нейтрализация ошибок" Height="30" MaxHeight="30"></MenuItem>
-                <MenuItem Header="Тестовый пример" Height="30" MaxHeight="30"></MenuItem>
-                <MenuItem Header="Список литературы" Height="30" MaxHeight="30"></MenuItem>
-                <MenuItem Header="Исходный код программы" Height="30" MaxHeight="30"></MenuItem>
+            <MenuItem Header="Текст" Height="20" MaxHeight="20" FontSize="13">
+                <MenuItem Header="Постановка задачи" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Грамматика" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Классификация грамматики" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Метод анализа" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Диагностика и нейтрализация ошибок" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Тестовый пример" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Список литературы" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Исходный код программы" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
             </MenuItem>
-            <MenuItem Header="Справка" Height="30" MaxHeight="30">
-                <MenuItem Header="Вызов справки" Height="30" MaxHeight="30"></MenuItem>
-                <MenuItem Header="О программе" Height="30" MaxHeight="30"></MenuItem>
+            <MenuItem Header="Справка" Height="20" MaxHeight="20" FontSize="13">
+                <MenuItem Header="Вызов справки" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="О программе" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
             </MenuItem>
-            <MenuItem Header="Пуск" Height="30" MaxHeight="30"></MenuItem>
+            <MenuItem Header="Пуск" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
         </Menu>
         <StatusBar DockPanel.Dock="Bottom"></StatusBar>
-        <!--<TabControl>
-            <TabItem>
-                
-            </TabItem>
-        </TabControl>-->
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Height="20" MaxHeight="20">
+                <MenuItem.Header>
+                    <fa:IconBlock Icon="SquarePlus"></fa:IconBlock>
+                </MenuItem.Header>
+            </MenuItem>
+            <MenuItem Height="20" MaxHeight="20">
+                <MenuItem.Header>
+                    <fa:IconBlock Icon="FolderOpen"></fa:IconBlock>
+                </MenuItem.Header>
+            </MenuItem>
+            <MenuItem Height="20" MaxHeight="20">
+                <MenuItem.Header>
+                    <fa:IconBlock Icon="Save"></fa:IconBlock>
+                </MenuItem.Header>
+            </MenuItem>
+            <MenuItem Height="20" MaxHeight="20">
+                <MenuItem.Header>
+                    <fa:IconBlock Icon="CircleLeft"></fa:IconBlock>
+                </MenuItem.Header>
+            </MenuItem>
+            <MenuItem Height="20" MaxHeight="20">
+                <MenuItem.Header>
+                    <fa:IconBlock Icon="CircleRight"></fa:IconBlock>
+                </MenuItem.Header>
+            </MenuItem>
+            <MenuItem Height="20" MaxHeight="20">
+                <MenuItem.Header>
+                    <fa:IconBlock Icon="Copy"></fa:IconBlock>
+                </MenuItem.Header>
+            </MenuItem>
+            <MenuItem Height="20" MaxHeight="20">
+                <MenuItem.Header>
+                    <fa:IconBlock Icon="Cut"></fa:IconBlock>
+                </MenuItem.Header>
+            </MenuItem>
+            <MenuItem Height="20" MaxHeight="20">
+                <MenuItem.Header>
+                    <fa:IconBlock Icon="Paste"></fa:IconBlock>
+                </MenuItem.Header>
+            </MenuItem>
+            <MenuItem Height="20" MaxHeight="20">
+                <MenuItem.Header>
+                    <fa:IconBlock Icon="Play"></fa:IconBlock>
+                </MenuItem.Header>
+            </MenuItem>
+            <MenuItem Height="20" MaxHeight="20">
+                <MenuItem.Header>
+                    <fa:IconBlock Icon="CircleQuestion"></fa:IconBlock>
+                </MenuItem.Header>
+            </MenuItem>
+            <MenuItem Height="20" MaxHeight="20">
+                <MenuItem.Header>
+                    <fa:IconBlock Icon="InfoCircle"></fa:IconBlock>
+                </MenuItem.Header>
+            </MenuItem>
+        </Menu>
+        <!--<Grid>
+            <TabControl>
+                <TabItem Header="efd"></TabItem>
+                <TabItem Header="fsd"></TabItem>
+                <TabItem Header="fsd"></TabItem>
+            </TabControl>
+        </Grid
     </DockPanel>
 </Window>
