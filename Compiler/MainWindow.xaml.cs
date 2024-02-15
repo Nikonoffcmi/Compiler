@@ -43,7 +43,12 @@ namespace Compiler
             if (result == true)
             {
                 if (tabFilename.Contains(dialog.FileName)){
-                    tabCont.SelectedItem = dialog.FileName;
+                    FileStream fis = File.Create(dialog.FileName);
+                    var tb = tabCont.Items.GetItemAt(tabFilename.IndexOf(dialog.FileName)) as TabItem;
+                    tabCont.SelectedItem = tb;
+                    var te = tb.Content as ICSharpCode.AvalonEdit.TextEditor;
+                    te.Text = "";
+                    fis.Close();
                     return;
                 }
 
@@ -125,46 +130,56 @@ namespace Compiler
 
         private void OpenFileDialog(object sender, RoutedEventArgs e)
         {
-            // Configure open file dialog box
             var dialog = new Microsoft.Win32.OpenFileDialog();
-            dialog.FileName = "Document"; // Default file name
-            dialog.DefaultExt = ".txt"; // Default file extension
-            dialog.Filter = "Text documents (.txt)|*.txt"; // Filter files by extension
+            dialog.Filter = "All Files (*.*)|*.*"; 
 
-            // Show open file dialog box
             bool? result = dialog.ShowDialog();
 
-            // Process open file dialog box results
-            //if (result == true)
-            //{
-            //    // Open document
-            //    filename = dialog.FileName;
+            if (result == true)
+            {
+                if (tabFilename.Contains(dialog.FileName))
+                {
+                    tabCont.SelectedItem = tabCont.Items.GetItemAt(tabFilename.IndexOf(dialog.FileName));
+                    return;
+                }
 
-            //    if (!Input.IsEnabled)
-            //    {
-            //        Input.IsEnabled = true;
-            //        Input.Text = "";
-            //    }
+                var filename = System.IO.Path.GetFileName(dialog.FileName);
+                string text;
 
-            //    using (StreamReader reader = new StreamReader(filename))
-            //    {
-            //        string text = reader.ReadToEnd();
-            //        Input.Text = text;
-            //    }
+                using (StreamReader reader = new StreamReader(dialog.FileName))
+                {
+                    text = reader.ReadToEnd();
+                }
 
-            //    SaveAsOption.IsEnabled = true;
-            //    SaveButton.IsEnabled = true;
-            //    SaveOption.IsEnabled = true;
-            //    RunButton.IsEnabled = true;
-            //    RunOption.IsEnabled = true;
-            //    CloseFileOption.IsEnabled = true;
-            //    EditOption.IsEnabled = true;
-            //    CancelButton.IsEnabled = true;
-            //    RepeatButton.IsEnabled = true;
-            //    CopyButton.IsEnabled = true;
-            //    CutButton.IsEnabled = true;
-            //    PasteButton.IsEnabled = true;
-            //}
+                var txtEdit = new TextEditor()
+                {
+                    WordWrap = true,
+                    ShowLineNumbers = true,
+                    LineNumbersForeground = Brushes.Black,
+                    FontFamily = new System.Windows.Media.FontFamily("Consolas"),
+                    SyntaxHighlighting = ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinitionByExtension(System.IO.Path.GetExtension(filename)),
+                    FontSize = 13,
+                    Text = text
+                };
+
+                var newTab = new TabItem { Header = filename, Content = txtEdit, ToolTip = dialog.FileName };
+                var tt = tabCont.Items.Add(newTab);
+                tabCont.SelectedItem = newTab;
+                tabFilename.Add(dialog.FileName);
+
+                SaveAsOption.IsEnabled = true;
+                SaveButton.IsEnabled = true;
+                SaveOption.IsEnabled = true;
+                RunButton.IsEnabled = true;
+                RunOption.IsEnabled = true;
+                CloseFileOption.IsEnabled = true;
+                EditOption.IsEnabled = true;
+                CancelButton.IsEnabled = true;
+                RepeatButton.IsEnabled = true;
+                CopyButton.IsEnabled = true;
+                CutButton.IsEnabled = true;
+                PasteButton.IsEnabled = true;
+            }
         }
 
 
