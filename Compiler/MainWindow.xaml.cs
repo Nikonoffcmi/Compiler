@@ -185,56 +185,56 @@ namespace Compiler
 
         private void CloseFile(object sender, RoutedEventArgs e)
         {
-            //CloseFileWindow closeFileWindow = new CloseFileWindow();
+            var tb = tabCont.SelectedItem as TabItem;
+            var te = tb.Content as ICSharpCode.AvalonEdit.TextEditor;
+            var mb = MessageBox.Show("Сохранить изменения?", "Подтверждение сохранения", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (mb == MessageBoxResult.Yes)
+            {
+                using (StreamWriter writer = new StreamWriter(tb.ToolTip.ToString(), false))
+                {
+                    writer.WriteLineAsync(te.Text);
+                }
+            }
+            else
+                return;
 
-            //if (closeFileWindow.ShowDialog() == true)
-            //{
-            //    using (StreamWriter writer = new StreamWriter(filename, false))
-            //    {
-            //        writer.WriteLineAsync(Input.Text);
-            //    }
-            //}
-            //else if (closeFileWindow.IsCanceled) { }
-            //else
-            //{
-            //    return;
-            //}
-            //Input.IsEnabled = false;
-            //SaveAsOption.IsEnabled = false;
-            //SaveButton.IsEnabled = false;
-            //SaveOption.IsEnabled = false;
-            //RunButton.IsEnabled = false;
-            //RunOption.IsEnabled = false;
-            //CloseFileOption.IsEnabled = false;
-            //EditOption.IsEnabled = false;
-            //CancelButton.IsEnabled = false;
-            //RepeatButton.IsEnabled = false;
-            //CopyButton.IsEnabled = false;
-            //CutButton.IsEnabled = false;
-            //PasteButton.IsEnabled = false;
-            //filename = "";
+            /*Input.IsEnabled = false;
+            SaveAsOption.IsEnabled = false;
+            SaveButton.IsEnabled = false;
+            SaveOption.IsEnabled = false;
+            RunButton.IsEnabled = false;
+            RunOption.IsEnabled = false;
+            CloseFileOption.IsEnabled = false;
+            EditOption.IsEnabled = false;
+            CancelButton.IsEnabled = false;
+            RepeatButton.IsEnabled = false;
+            CopyButton.IsEnabled = false;
+            CutButton.IsEnabled = false;
+            PasteButton.IsEnabled = false;
+            filename = "";*/
         }
         void MainWindow_Closing(object sender, CancelEventArgs e)
         {
-            //if (filename != "")
-            //{
-            //    CloseFileWindow closeFileWindow = new CloseFileWindow();
-            //    e.Cancel = false;
-            //    if (closeFileWindow.ShowDialog() == true)
-            //    {
-            //        using (StreamWriter writer = new StreamWriter(filename, false))
-            //        {
-            //            writer.WriteLineAsync(Input.Text);
-            //        }
-            //    }
-            //    else if (closeFileWindow.IsCanceled) { }
-            //    else if (closeFileWindow.IsClosed)
-            //    {
-            //        e.Cancel = true;
-            //        return;
-            //    }
-
-            //}
+            if (tabCont.Items.Count > 0)
+            {
+                var mb = MessageBox.Show("Сохранить изменения?", "Подтверждение сохранения", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (mb == MessageBoxResult.Yes)
+                {
+                    foreach (TabItem item in tabCont.Items)
+                    {
+                        var te = item.Content as ICSharpCode.AvalonEdit.TextEditor;
+                        using (StreamWriter writer = new StreamWriter(item.ToolTip.ToString(), false))
+                        {
+                            writer.WriteLineAsync(te.Text);
+                        }
+                    }
+                }
+                else
+                {
+                    e.Cancel = true;
+                    return;
+                }
+            }
         }
 
         private void Undo(object sender, RoutedEventArgs e)

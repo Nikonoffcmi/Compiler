@@ -9,7 +9,7 @@
         xmlns:mv="clr-namespace:Compiler"
         mc:Ignorable="d"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        Title="Text editor" Height="450" Width="800" WindowStartupLocation="CenterScreen">
+        Title="Text editor" Height="450" Width="800" WindowStartupLocation="CenterScreen" Closing="MainWindow_Closing">
     <Window.DataContext>
         <local:MainWindowModel></local:MainWindowModel>
     </Window.DataContext>
