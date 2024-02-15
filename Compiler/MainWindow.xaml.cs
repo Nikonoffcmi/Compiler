@@ -60,195 +60,200 @@ namespace Compiler
                     FontSize = 13
                 };
 
-                var tt = tabCont.Items.Add(new TabItem { Header = filename, Content = txtEdit});
-                tabFilename.Add(dialog.FileName);
-                //SaveAsOption.IsEnabled = true;
-                //SaveButton.IsEnabled = true;
-                //SaveOption.IsEnabled = true;
-                //RunButton.IsEnabled = true;
-                //RunOption.IsEnabled = true;
-                //CloseFileOption.IsEnabled = true;
-                //EditOption.IsEnabled = true;
-                //CancelButton.IsEnabled = true;
-                //RepeatButton.IsEnabled = true;
-                //CopyButton.IsEnabled = true;
-                //CutButton.IsEnabled = true;
-                //PasteButton.IsEnabled = true;
+                var newTab = new TabItem { Header = filename, Content = txtEdit };
+                var tt = tabCont.Items.Add(newTab);
+                tabCont.SelectedItem = newTab;
+                tabFilename.Add(filename);
+                SaveAsOption.IsEnabled = true;
+                SaveButton.IsEnabled = true;
+                SaveOption.IsEnabled = true;
+                RunButton.IsEnabled = true;
+                RunOption.IsEnabled = true;
+                CloseFileOption.IsEnabled = true;
+                EditOption.IsEnabled = true;
+                CancelButton.IsEnabled = true;
+                RepeatButton.IsEnabled = true;
+                CopyButton.IsEnabled = true;
+                CutButton.IsEnabled = true;
+                PasteButton.IsEnabled = true;
                 fs.Close();
             }
         }
-        //private void SaveAsFileDialog(object sender, RoutedEventArgs e)
-        //{
-        //    // Configure save file dialog box
-        //    var dialog = new Microsoft.Win32.SaveFileDialog();
-        //    dialog.FileName = "Document"; // Default file name
-        //    dialog.DefaultExt = ".txt"; // Default file extension
-        //    dialog.Filter = "Text documents (.txt)|*.txt"; // Filter files by extension
+        private void SaveAsFileDialog(object sender, RoutedEventArgs e)
+        {
+            var tb = tabCont.SelectedItem as TabItem;
 
-        //    // Show save file dialog box
-        //    bool? result = dialog.ShowDialog();
+            var dialog = new Microsoft.Win32.SaveFileDialog();
+            dialog.FileName = System.IO.Path.GetFileNameWithoutExtension(tb.Header.ToString());
+            dialog.DefaultExt = System.IO.Path.GetExtension(tb.Header.ToString());
+            dialog.Filter = "All Files (*.*)|*.*";
 
-        //    // Process save file dialog box results
-        //    if (result == true)
-        //    {
-        //        // Save document
-        //        filename = dialog.FileName;
+            var index = tabFilename.IndexOf(tb.Header.ToString());
+            bool? result = dialog.ShowDialog();
 
-        //        FileStream fs = File.Create(filename);
-        //        fs.Close();
+            if (result == true)
+            {
+                var filename = dialog.FileName;
 
-        //        using (StreamWriter writer = new StreamWriter(filename, false))
-        //        {
-        //            writer.WriteLineAsync(Input.Text);
-        //        }
-        //        MessageBox.Show("Данные сохранены в " + filename);
-        //    }
-        //}
+                FileStream fs = File.Create(filename);
+                fs.Close();
+                var te = tb.Content as ICSharpCode.AvalonEdit.TextEditor;
+                using (StreamWriter writer = new StreamWriter(filename, false))
+                {
+                    writer.WriteLineAsync(te.Text);
+                }
+                MessageBox.Show("Данные сохранены в " + filename);
 
-        //private void SaveFileDialog(object sender, RoutedEventArgs e)
-        //{
-        //    using (StreamWriter writer = new StreamWriter(filename, false))
-        //    {
-        //        writer.WriteLineAsync(Input.Text);
-        //    }
+                var name = System.IO.Path.GetFileName(filename);
+                tb.Header = name;
+                tabFilename[index] = filename;
+            }
+        }
 
-        //    MessageBox.Show("Данные сохранены в " + filename);
-        //}
+        private void SaveFileDialog(object sender, RoutedEventArgs e)
+        {
+            //using (StreamWriter writer = new StreamWriter(filename, false))
+            //{
+            //    writer.WriteLineAsync(Input.Text);
+            //}
 
-        //private void OpenFileDialog(object sender, RoutedEventArgs e)
-        //{
-        //    // Configure open file dialog box
-        //    var dialog = new Microsoft.Win32.OpenFileDialog();
-        //    dialog.FileName = "Document"; // Default file name
-        //    dialog.DefaultExt = ".txt"; // Default file extension
-        //    dialog.Filter = "Text documents (.txt)|*.txt"; // Filter files by extension
+            //MessageBox.Show("Данные сохранены в " + filename);
+        }
 
-        //    // Show open file dialog box
-        //    bool? result = dialog.ShowDialog();
+        private void OpenFileDialog(object sender, RoutedEventArgs e)
+        {
+            // Configure open file dialog box
+            var dialog = new Microsoft.Win32.OpenFileDialog();
+            dialog.FileName = "Document"; // Default file name
+            dialog.DefaultExt = ".txt"; // Default file extension
+            dialog.Filter = "Text documents (.txt)|*.txt"; // Filter files by extension
 
-        //    // Process open file dialog box results
-        //    if (result == true)
-        //    {
-        //        // Open document
-        //        filename = dialog.FileName;
+            // Show open file dialog box
+            bool? result = dialog.ShowDialog();
 
-        //        if (!Input.IsEnabled)
-        //        {
-        //            Input.IsEnabled = true;
-        //            Input.Text = "";
-        //        }
+            // Process open file dialog box results
+            //if (result == true)
+            //{
+            //    // Open document
+            //    filename = dialog.FileName;
 
-        //        using (StreamReader reader = new StreamReader(filename))
-        //        {
-        //            string text = reader.ReadToEnd();
-        //            Input.Text = text;
-        //        }
+            //    if (!Input.IsEnabled)
+            //    {
+            //        Input.IsEnabled = true;
+            //        Input.Text = "";
+            //    }
 
-        //        SaveAsOption.IsEnabled = true;
-        //        SaveButton.IsEnabled = true;
-        //        SaveOption.IsEnabled = true;
-        //        RunButton.IsEnabled = true;
-        //        RunOption.IsEnabled = true;
-        //        CloseFileOption.IsEnabled = true;
-        //        EditOption.IsEnabled = true;
-        //        CancelButton.IsEnabled = true;
-        //        RepeatButton.IsEnabled = true;
-        //        CopyButton.IsEnabled = true;
-        //        CutButton.IsEnabled = true;
-        //        PasteButton.IsEnabled = true;
-        //    }
-        //}
+            //    using (StreamReader reader = new StreamReader(filename))
+            //    {
+            //        string text = reader.ReadToEnd();
+            //        Input.Text = text;
+            //    }
+
+            //    SaveAsOption.IsEnabled = true;
+            //    SaveButton.IsEnabled = true;
+            //    SaveOption.IsEnabled = true;
+            //    RunButton.IsEnabled = true;
+            //    RunOption.IsEnabled = true;
+            //    CloseFileOption.IsEnabled = true;
+            //    EditOption.IsEnabled = true;
+            //    CancelButton.IsEnabled = true;
+            //    RepeatButton.IsEnabled = true;
+            //    CopyButton.IsEnabled = true;
+            //    CutButton.IsEnabled = true;
+            //    PasteButton.IsEnabled = true;
+            //}
+        }
 
 
-        //private void CloseFile(object sender, RoutedEventArgs e)
-        //{
-        //    CloseFileWindow closeFileWindow = new CloseFileWindow();
+        private void CloseFile(object sender, RoutedEventArgs e)
+        {
+            //CloseFileWindow closeFileWindow = new CloseFileWindow();
 
-        //    if (closeFileWindow.ShowDialog() == true)
-        //    {
-        //        using (StreamWriter writer = new StreamWriter(filename, false))
-        //        {
-        //            writer.WriteLineAsync(Input.Text);
-        //        }
-        //    }
-        //    else if (closeFileWindow.IsCanceled) { }
-        //    else
-        //    {
-        //        return;
-        //    }
-        //    Input.IsEnabled = false;
-        //    SaveAsOption.IsEnabled = false;
-        //    SaveButton.IsEnabled = false;
-        //    SaveOption.IsEnabled = false;
-        //    RunButton.IsEnabled = false;
-        //    RunOption.IsEnabled = false;
-        //    CloseFileOption.IsEnabled = false;
-        //    EditOption.IsEnabled = false;
-        //    CancelButton.IsEnabled = false;
-        //    RepeatButton.IsEnabled = false;
-        //    CopyButton.IsEnabled = false;
-        //    CutButton.IsEnabled = false;
-        //    PasteButton.IsEnabled = false;
-        //    filename = "";
-        //}
-        //void MainWindow_Closing(object sender, CancelEventArgs e)
-        //{
-        //    if (filename != "")
-        //    {
-        //        CloseFileWindow closeFileWindow = new CloseFileWindow();
-        //        e.Cancel = false;
-        //        if (closeFileWindow.ShowDialog() == true)
-        //        {
-        //            using (StreamWriter writer = new StreamWriter(filename, false))
-        //            {
-        //                writer.WriteLineAsync(Input.Text);
-        //            }
-        //        }
-        //        else if (closeFileWindow.IsCanceled) { }
-        //        else if (closeFileWindow.IsClosed)
-        //        {
-        //            e.Cancel = true;
-        //            return;
-        //        }
+            //if (closeFileWindow.ShowDialog() == true)
+            //{
+            //    using (StreamWriter writer = new StreamWriter(filename, false))
+            //    {
+            //        writer.WriteLineAsync(Input.Text);
+            //    }
+            //}
+            //else if (closeFileWindow.IsCanceled) { }
+            //else
+            //{
+            //    return;
+            //}
+            //Input.IsEnabled = false;
+            //SaveAsOption.IsEnabled = false;
+            //SaveButton.IsEnabled = false;
+            //SaveOption.IsEnabled = false;
+            //RunButton.IsEnabled = false;
+            //RunOption.IsEnabled = false;
+            //CloseFileOption.IsEnabled = false;
+            //EditOption.IsEnabled = false;
+            //CancelButton.IsEnabled = false;
+            //RepeatButton.IsEnabled = false;
+            //CopyButton.IsEnabled = false;
+            //CutButton.IsEnabled = false;
+            //PasteButton.IsEnabled = false;
+            //filename = "";
+        }
+        void MainWindow_Closing(object sender, CancelEventArgs e)
+        {
+            //if (filename != "")
+            //{
+            //    CloseFileWindow closeFileWindow = new CloseFileWindow();
+            //    e.Cancel = false;
+            //    if (closeFileWindow.ShowDialog() == true)
+            //    {
+            //        using (StreamWriter writer = new StreamWriter(filename, false))
+            //        {
+            //            writer.WriteLineAsync(Input.Text);
+            //        }
+            //    }
+            //    else if (closeFileWindow.IsCanceled) { }
+            //    else if (closeFileWindow.IsClosed)
+            //    {
+            //        e.Cancel = true;
+            //        return;
+            //    }
 
-        //    }
-        //}
+            //}
+        }
 
-        //private void Undo(object sender, RoutedEventArgs e)
-        //{
-        //    Input.Undo();
-        //}
+        private void Undo(object sender, RoutedEventArgs e)
+        {
+            //Input.Undo();
+        }
 
-        //private void Redo(object sender, RoutedEventArgs e)
-        //{
-        //    Input.Redo();
-        //}
+        private void Redo(object sender, RoutedEventArgs e)
+        {
+            //Input.Redo();
+        }
 
-        //private void Copy(object sender, RoutedEventArgs e)
-        //{
-        //    Input.Copy();
-        //}
+        private void Copy(object sender, RoutedEventArgs e)
+        {
+            //Input.Copy();
+        }
 
-        //private void Paste(object sender, RoutedEventArgs e)
-        //{
-        //    Input.Paste();
-        //}
+        private void Paste(object sender, RoutedEventArgs e)
+        {
+            //Input.Paste();
+        }
 
-        //private void Cut(object sender, RoutedEventArgs e)
-        //{
-        //    Input.Cut();
-        //}
+        private void Cut(object sender, RoutedEventArgs e)
+        {
+            //Input.Cut();
+        }
 
-        //private void Delete(object sender, RoutedEventArgs e)
-        //{
-        //    Input.Cut();
-        //    Clipboard.Clear();
-        //}
+        private void Delete(object sender, RoutedEventArgs e)
+        {
+            //Input.Cut();
+            Clipboard.Clear();
+        }
 
-        //private void SelectAll(object sender, RoutedEventArgs e)
-        //{
-        //    Input.SelectAll();
-        //}
+        private void SelectAll(object sender, RoutedEventArgs e)
+        {
+            //Input.SelectAll();
+        }
 
         private static FileInfo? GetFile()
         {

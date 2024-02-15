@@ -15,14 +15,14 @@
     </Window.DataContext>
     <DockPanel>
         <Menu DockPanel.Dock="Top" MaxHeight="20">
-            <MenuItem Header="Файл" Click="CreateFileDialog" Height="20" MaxHeight="20" FontSize="13">
-                <MenuItem Header="Создать" Command="" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+            <MenuItem Header="Файл" Height="20" MaxHeight="20" FontSize="13">
+                <MenuItem Header="Создать" Click="CreateFileDialog" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
                 <MenuItem Header="Открыть" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
-                <MenuItem Header="Сохранить" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
-                <MenuItem Header="Сохранить как" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
-                <MenuItem Header="Выход" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Сохранить" Name="SaveOption" IsEnabled="False" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Сохранить как" Name="SaveAsOption" Click="SaveAsFileDialog" IsEnabled="False" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Выход" Name="CloseFileOption" IsEnabled="False" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
             </MenuItem>
-            <MenuItem Header="Правка" Height="20" MaxHeight="20" FontSize="13">
+            <MenuItem Header="Правка" Name="EditOption" IsEnabled="False" Height="20" MaxHeight="20" FontSize="13">
                 <MenuItem Header="Отменить" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
                 <MenuItem Header="Повторить" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
                 <MenuItem Header="Вырезать" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
@@ -45,61 +45,61 @@
                 <MenuItem Header="Вызов справки" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
                 <MenuItem Header="О программе" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
             </MenuItem>
-            <MenuItem Header="Пуск" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+            <MenuItem Header="Пуск" Name="RunOption" IsEnabled="False" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
         </Menu>
         <StatusBar DockPanel.Dock="Bottom"></StatusBar>
         <Menu DockPanel.Dock="Top">
-            <MenuItem Height="20" MaxHeight="20">
+            <MenuItem Height="20" MaxHeight="20" ToolTip="Создать файл" Click="CreateFileDialog">
                 <MenuItem.Header>
                     <fa:IconBlock Icon="SquarePlus"></fa:IconBlock>
                 </MenuItem.Header>
             </MenuItem>
-            <MenuItem Height="20" MaxHeight="20">
+            <MenuItem Height="20" MaxHeight="20" ToolTip="Открыть файл" Click="OpenFileDialog">
                 <MenuItem.Header>
                     <fa:IconBlock Icon="FolderOpen"></fa:IconBlock>
                 </MenuItem.Header>
             </MenuItem>
-            <MenuItem Height="20" MaxHeight="20">
+            <MenuItem Height="20" MaxHeight="20" ToolTip="Сохранить файл" Click="SaveFileDialog" Name="SaveButton" IsEnabled="False">
                 <MenuItem.Header>
                     <fa:IconBlock Icon="Save"></fa:IconBlock>
                 </MenuItem.Header>
             </MenuItem>
-            <MenuItem Height="20" MaxHeight="20">
+            <MenuItem Height="20" MaxHeight="20" ToolTip="Отмена изменений" Name="CancelButton" IsEnabled="False" Click="Undo">
                 <MenuItem.Header>
                     <fa:IconBlock Icon="CircleLeft"></fa:IconBlock>
                 </MenuItem.Header>
             </MenuItem>
-            <MenuItem Height="20" MaxHeight="20">
+            <MenuItem Height="20" MaxHeight="20" ToolTip="Повтор последнего действия" Name="RepeatButton" IsEnabled="False" Click="Redo">
                 <MenuItem.Header>
                     <fa:IconBlock Icon="CircleRight"></fa:IconBlock>
                 </MenuItem.Header>
             </MenuItem>
-            <MenuItem Height="20" MaxHeight="20">
+            <MenuItem Height="20" MaxHeight="20" ToolTip="Копировать" Name="CopyButton" IsEnabled="False" Click="Copy">
                 <MenuItem.Header>
                     <fa:IconBlock Icon="Copy"></fa:IconBlock>
                 </MenuItem.Header>
             </MenuItem>
-            <MenuItem Height="20" MaxHeight="20">
+            <MenuItem Height="20" MaxHeight="20" ToolTip="Вырезать" Name="CutButton" IsEnabled="False" Click="Cut">
                 <MenuItem.Header>
                     <fa:IconBlock Icon="Cut"></fa:IconBlock>
                 </MenuItem.Header>
             </MenuItem>
-            <MenuItem Height="20" MaxHeight="20">
+            <MenuItem Height="20" MaxHeight="20" ToolTip="Вставить" Name="PasteButton" IsEnabled="False" Click="Paste">
                 <MenuItem.Header>
                     <fa:IconBlock Icon="Paste"></fa:IconBlock>
                 </MenuItem.Header>
             </MenuItem>
-            <MenuItem Height="20" MaxHeight="20" ToolTip="Запуск">
+            <MenuItem Height="20" MaxHeight="20" ToolTip="Пуск" IsEnabled="False" Name ="RunButton">
                 <MenuItem.Header>
                     <fa:IconBlock Icon="Play"></fa:IconBlock>
                 </MenuItem.Header>
             </MenuItem>
-            <MenuItem Height="20" MaxHeight="20">
+            <MenuItem Height="20" MaxHeight="20" ToolTip="Справка">
                 <MenuItem.Header>
                     <fa:IconBlock Icon="CircleQuestion"></fa:IconBlock>
                 </MenuItem.Header>
             </MenuItem>
-            <MenuItem Height="20" MaxHeight="20">
+            <MenuItem Height="20" MaxHeight="20" ToolTip="О программе">
                 <MenuItem.Header>
                     <fa:IconBlock Icon="InfoCircle"></fa:IconBlock>
                 </MenuItem.Header>
