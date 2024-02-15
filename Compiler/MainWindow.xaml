@@ -17,19 +17,19 @@
         <Menu DockPanel.Dock="Top" MaxHeight="20">
             <MenuItem Header="Файл" Height="20" MaxHeight="20" FontSize="13">
                 <MenuItem Header="Создать" Click="CreateFileDialog" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
-                <MenuItem Header="Открыть" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
-                <MenuItem Header="Сохранить" Name="SaveOption" IsEnabled="False" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Открыть" Click="OpenFileDialog" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Сохранить" Name="SaveOption" Click="SaveFileDialog" IsEnabled="False" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
                 <MenuItem Header="Сохранить как" Name="SaveAsOption" Click="SaveAsFileDialog" IsEnabled="False" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
-                <MenuItem Header="Выход" Name="CloseFileOption" IsEnabled="False" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Выход" Name="CloseFileOption" Click="CloseFile" IsEnabled="False" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
             </MenuItem>
             <MenuItem Header="Правка" Name="EditOption" IsEnabled="False" Height="20" MaxHeight="20" FontSize="13">
-                <MenuItem Header="Отменить" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
-                <MenuItem Header="Повторить" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
-                <MenuItem Header="Вырезать" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
-                <MenuItem Header="Копировать" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
-                <MenuItem Header="Вставить" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
-                <MenuItem Header="Удалить" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
-                <MenuItem Header="Выделить все" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Отменить" Click="Undo" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Повторить" Click="Redo" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Вырезать" Click="Cut" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Копировать" Click="Copy" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Вставить" Click="Paste" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Удалить" Click="Delete" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Выделить все" Click="SelectAll" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
             </MenuItem>
             <MenuItem Header="Текст" Height="20" MaxHeight="20" FontSize="13">
                 <MenuItem Header="Постановка задачи" Height="20" MaxHeight="20" FontSize="13"></MenuItem>

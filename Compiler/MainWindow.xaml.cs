@@ -60,10 +60,11 @@ namespace Compiler
                     FontSize = 13
                 };
 
-                var newTab = new TabItem { Header = filename, Content = txtEdit };
+                var newTab = new TabItem { Header = filename, Content = txtEdit, ToolTip = dialog.FileName };
                 var tt = tabCont.Items.Add(newTab);
                 tabCont.SelectedItem = newTab;
-                tabFilename.Add(filename);
+                tabFilename.Add(dialog.FileName);
+
                 SaveAsOption.IsEnabled = true;
                 SaveButton.IsEnabled = true;
                 SaveOption.IsEnabled = true;
@@ -88,7 +89,7 @@ namespace Compiler
             dialog.DefaultExt = System.IO.Path.GetExtension(tb.Header.ToString());
             dialog.Filter = "All Files (*.*)|*.*";
 
-            var index = tabFilename.IndexOf(tb.Header.ToString());
+            var index = tabFilename.IndexOf(tb.ToolTip.ToString());
             bool? result = dialog.ShowDialog();
 
             if (result == true)
@@ -112,12 +113,14 @@ namespace Compiler
 
         private void SaveFileDialog(object sender, RoutedEventArgs e)
         {
-            //using (StreamWriter writer = new StreamWriter(filename, false))
-            //{
-            //    writer.WriteLineAsync(Input.Text);
-            //}
+            var tb = tabCont.SelectedItem as TabItem;
+            var te = tb.Content as ICSharpCode.AvalonEdit.TextEditor;
+            using (StreamWriter writer = new StreamWriter(tb.ToolTip.ToString(), false))
+            {
+                writer.WriteLineAsync(te.Text);
+            }
 
-            //MessageBox.Show("Данные сохранены в " + filename);
+            MessageBox.Show("Данные сохранены в " + tb.ToolTip.ToString());
         }
 
         private void OpenFileDialog(object sender, RoutedEventArgs e)
