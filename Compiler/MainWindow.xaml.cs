@@ -239,38 +239,51 @@ namespace Compiler
 
         private void Undo(object sender, RoutedEventArgs e)
         {
-            //Input.Undo();
+            var tb = tabCont.SelectedItem as TabItem;
+            var te = tb.Content as ICSharpCode.AvalonEdit.TextEditor;
+            te.Undo();
         }
 
         private void Redo(object sender, RoutedEventArgs e)
         {
-            //Input.Redo();
+            var tb = tabCont.SelectedItem as TabItem;
+            var te = tb.Content as ICSharpCode.AvalonEdit.TextEditor;
+            te.Redo();
         }
 
         private void Copy(object sender, RoutedEventArgs e)
         {
-            //Input.Copy();
+            var tb = tabCont.SelectedItem as TabItem;
+            var te = tb.Content as ICSharpCode.AvalonEdit.TextEditor;
+            te.Copy();
         }
 
         private void Paste(object sender, RoutedEventArgs e)
         {
-            //Input.Paste();
+            var tb = tabCont.SelectedItem as TabItem;
+            var te = tb.Content as ICSharpCode.AvalonEdit.TextEditor;
+            te.Paste();
         }
 
         private void Cut(object sender, RoutedEventArgs e)
         {
-            //Input.Cut();
+            var tb = tabCont.SelectedItem as TabItem;
+            var te = tb.Content as ICSharpCode.AvalonEdit.TextEditor;
+            te.Cut();
         }
 
         private void Delete(object sender, RoutedEventArgs e)
         {
-            //Input.Cut();
-            Clipboard.Clear();
+            var tb = tabCont.SelectedItem as TabItem;
+            var te = tb.Content as ICSharpCode.AvalonEdit.TextEditor;
+            te.Delete();
         }
 
         private void SelectAll(object sender, RoutedEventArgs e)
         {
-            //Input.SelectAll();
+            var tb = tabCont.SelectedItem as TabItem;
+            var te = tb.Content as ICSharpCode.AvalonEdit.TextEditor;
+            te.SelectAll();
         }
 
         private static FileInfo? GetFile()
