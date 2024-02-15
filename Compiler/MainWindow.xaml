@@ -6,12 +6,16 @@
         xmlns:ae="http://icsharpcode.net/sharpdevelop/avalonedit"
         xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
         xmlns:local="clr-namespace:Compiler"
+        xmlns:mv="clr-namespace:Compiler"
         mc:Ignorable="d"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        Title="Text editor" Height="450" Width="800">
+        Title="Text editor" Height="450" Width="800" WindowStartupLocation="CenterScreen">
+    <Window.DataContext>
+        <local:MainWindowModel></local:MainWindowModel>
+    </Window.DataContext>
     <DockPanel>
         <Menu DockPanel.Dock="Top" MaxHeight="20">
-            <MenuItem Header="Файл" Height="20" MaxHeight="20" FontSize="13">
+            <MenuItem Header="Файл" Click="CreateFileDialog" Height="20" MaxHeight="20" FontSize="13">
                 <MenuItem Header="Создать" Command="" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
                 <MenuItem Header="Открыть" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
                 <MenuItem Header="Сохранить" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
@@ -85,7 +89,7 @@
                     <fa:IconBlock Icon="Paste"></fa:IconBlock>
                 </MenuItem.Header>
             </MenuItem>
-            <MenuItem Height="20" MaxHeight="20">
+            <MenuItem Height="20" MaxHeight="20" ToolTip="Запуск">
                 <MenuItem.Header>
                     <fa:IconBlock Icon="Play"></fa:IconBlock>
                 </MenuItem.Header>
@@ -101,27 +105,15 @@
                 </MenuItem.Header>
             </MenuItem>
         </Menu>
-        <Grid>
+        <Grid Name="grid">
             <Grid.RowDefinitions>
-                <RowDefinition Height="25*"/>
-                <RowDefinition Height="104*"/>
+                <RowDefinition Height="20*"/>
+                <RowDefinition Height="109*"/>
                 <RowDefinition Height="68*"/>
             </Grid.RowDefinitions>
             <GridSplitter Grid.Column="0" Grid.Row="2" VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="5" Background="Black"></GridSplitter>
-            <TabControl Grid.RowSpan="2" Background="Black">
-                <TabItem Header="efd">
-                    <ae:TextEditor
-                        WordWrap="True"
-                        ShowLineNumbers="True"
-                        LineNumbersForeground="Black"
-                        x:Name="textEditor"
-                        FontFamily="Consolas"
-                        SyntaxHighlighting="C#"
-                        FontSize="10pt">
-                    </ae:TextEditor>
-                </TabItem>
-                <TabItem Header="fsd"></TabItem>
-                <TabItem Header="fsd"></TabItem>
+            <TabControl Grid.RowSpan="2" Background="Black" Name="tabCont">
+                
             </TabControl>
             
         </Grid>

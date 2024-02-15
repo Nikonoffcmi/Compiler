@@ -11,115 +11,118 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
+using ICSharpCode.AvalonEdit.CodeCompletion;
+using ICSharpCode.AvalonEdit.Folding;
+using ICSharpCode.AvalonEdit.Highlighting;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Windows.Markup;
+using System.Windows.Threading;
+using System.Xaml;
 
 namespace Compiler
 {
-    public class ViewModel
+    internal abstract class ViewModel : MarkupExtension, INotifyPropertyChanged, IDisposable
     {
-        private string _test;
-        public string Test
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string PropertyName = null)
         {
-            get { return _test; }
-            set { _test = value; }
+            //PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(PropertyName));
+            var handlers = PropertyChanged;
+            if (handlers is null) return;
+
+            var invocation_list = handlers.GetInvocationList();
+
+            var arg = new PropertyChangedEventArgs(PropertyName);
+            foreach (var action in invocation_list)
+                if (action.Target is DispatcherObject disp_object)
+                    disp_object.Dispatcher.Invoke(action, this, arg);
+                else
+                    action.DynamicInvoke(this, arg);
+        }
+
+        protected virtual bool Set<T>(ref T field, T value, [CallerMemberName] string PropertyName = null)
+        {
+            if (Equals(field, value)) return false;
+            field = value;
+            OnPropertyChanged(PropertyName);
+            return true;
+        }
+
+        public override object ProvideValue(IServiceProvider sp)
+        {
+            var value_target_service = sp.GetService(typeof(IProvideValueTarget)) as IProvideValueTarget;
+            var root_object_service = sp.GetService(typeof(IRootObjectProvider)) as IRootObjectProvider;
+
+            OnInitialized(
+                value_target_service?.TargetObject,
+                value_target_service?.TargetProperty,
+                root_object_service?.RootObject);
+
+            return this;
+        }
+
+        private WeakReference _TargetRef;
+        private WeakReference _RootRef;
+
+        public object TargetObject => _TargetRef.Target;
+
+        public object RootObject => _RootRef.Target;
+
+        protected virtual void OnInitialized(object Target, object Property, object Root)
+        {
+            _TargetRef = new WeakReference(Target);
+            _RootRef = new WeakReference(Root);
+        }
+
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        private bool _Disposed;
+        protected virtual void Dispose(bool Disposing)
+        {
+            if (!Disposing || _Disposed) return;
+            _Disposed = true;
+            // Освобождение управляемых ресурсов
         }
     }
-    public sealed class AvalonEditBehaviour : Behavior<TextEditor>
+
+    internal class MainWindowModel : ViewModel
     {
-        public static readonly DependencyProperty GiveMeTheTextProperty =
-            DependencyProperty.Register("GiveMeTheText", typeof(string), typeof(AvalonEditBehaviour),
-            new FrameworkPropertyMetadata(default(string), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, PropertyChangedCallback));
+        //public ObservableCollection<TabModel> Tabs { get; } = new();
 
-        public string GiveMeTheText
-        {
-            get { return (string)GetValue(GiveMeTheTextProperty); }
-            set { SetValue(GiveMeTheTextProperty, value); }
-        }
+        //private TabModel? _selectedTab;
 
-        protected override void OnAttached()
-        {
-            base.OnAttached();
-            if (AssociatedObject != null)
-                AssociatedObject.TextChanged += AssociatedObjectOnTextChanged;
-        }
-
-        protected override void OnDetaching()
-        {
-            base.OnDetaching();
-            if (AssociatedObject != null)
-                AssociatedObject.TextChanged -= AssociatedObjectOnTextChanged;
-        }
-
-        private void AssociatedObjectOnTextChanged(object sender, EventArgs eventArgs)
-        {
-            var textEditor = sender as TextEditor;
-            if (textEditor != null)
-            {
-                if (textEditor.Document != null)
-                    GiveMeTheText = textEditor.Document.Text;
-            }
-        }
-
-        private static void PropertyChangedCallback(
-            DependencyObject dependencyObject,
-            DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
-        {
-            var behavior = dependencyObject as AvalonEditBehaviour;
-            if (behavior.AssociatedObject != null)
-            {
-                var editor = behavior.AssociatedObject as TextEditor;
-                if (editor.Document != null)
-                {
-                    var caretOffset = editor.CaretOffset;
-                    editor.Document.Text = dependencyPropertyChangedEventArgs.NewValue.ToString();
-                    editor.CaretOffset = caretOffset;
-                }
-            }
-        }
-    }
-
-    internal class MainWindowModel
-    {
-        public ObservableCollection<TabModel> Tabs { get; } = new();
-
-        private TabModel? _selectedTab;
-
-        private bool _isDarkTheme;
+        public int[] _isDarkTheme = new int[4];
 
 
         public MainWindowModel()
         {
-            BindingOperations.EnableCollectionSynchronization(Tabs, new());
-
+            //BindingOperations.EnableCollectionSynchronization(Tabs, new());
+            string FileName = "fir.cs";
+            ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinitionByExtension(Path.GetExtension(FileName));
+            
         }
 
-        public async Task OpenFile()
-        {
-            if (GetFile() is { } file)
-            {
-            }
-        }
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        private void CloseTab(TabModel tabViewModel)
-        {
-            Tabs.Remove(tabViewModel);
-        }
+        //public async Task OpenFile()
+        //{
+        //    if (GetFile() is { } file)
+        //    {
+        //    }
+        //}
 
-        private static FileInfo? GetFile()
-        {
-            OpenFileDialog openFileDialog = new()
-            {
-                Title = "Open File",
-                Filter = "All Files (*.*)|*.*",
-                CheckFileExists = true,
-                CheckPathExists = true,
-                RestoreDirectory = true,
-            };
-            if (openFileDialog.ShowDialog() == true)
-            {
-                return new FileInfo(openFileDialog.FileName);
-            }
-            return null;
-        }
+        //private void CloseTab(TabModel tabViewModel)
+        //{
+        //    Tabs.Remove(tabViewModel);
+        //}
+
+
 
 
 
