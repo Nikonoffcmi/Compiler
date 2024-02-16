@@ -39,8 +39,8 @@
                 <MenuItem Header="Исходный код программы" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
             </MenuItem>
             <MenuItem Header="Справка" Height="20" MaxHeight="20" FontSize="13">
-                <MenuItem Header="Вызов справки" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
-                <MenuItem Header="О программе" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Вызов справки" Click="CallHelp" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="О программе" Click="CallAbout" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
             </MenuItem>
             <MenuItem Header="Пуск" Name="RunOption" IsEnabled="False" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
         </Menu>
@@ -90,12 +90,12 @@
                     <fa:IconBlock Icon="Play"></fa:IconBlock>
                 </MenuItem.Header>
             </MenuItem>
-            <MenuItem Height="20" MaxHeight="20" ToolTip="Справка">
+            <MenuItem Height="20" MaxHeight="20" ToolTip="Справка" Click="CallHelp">
                 <MenuItem.Header>
                     <fa:IconBlock Icon="CircleQuestion"></fa:IconBlock>
                 </MenuItem.Header>
             </MenuItem>
-            <MenuItem Height="20" MaxHeight="20" ToolTip="О программе">
+            <MenuItem Height="20" MaxHeight="20" ToolTip="О программе" Click="CallAbout">
                 <MenuItem.Header>
                     <fa:IconBlock Icon="InfoCircle"></fa:IconBlock>
                 </MenuItem.Header>

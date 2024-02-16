@@ -349,6 +349,17 @@ namespace Compiler
             return null;
         }
 
+        private void CallHelp(object sender, RoutedEventArgs e)
+        {
+            var callHelp = new Help();
+            callHelp.ShowDialog();
+        }
+        private void CallAbout(object sender, RoutedEventArgs e)
+        {
+            var callAbout = new About();
+            callAbout.ShowDialog();
+        }
+
         private void DockPanel_Drop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
