@@ -3,13 +3,152 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ae="http://icsharpcode.net/sharpdevelop/avalonedit"
+        xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
         xmlns:local="clr-namespace:Compiler"
         mc:Ignorable="d"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        Title="MainWindow" Height="450" Width="800">
-    
-    <Grid>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="248,200,0,0" VerticalAlignment="Top" Background="DarkBlue"/>
+        Title="Text editor" Height="450" Width="800" 
+        WindowStartupLocation="CenterScreen" Closing="MainWindow_Closing" Drop="DockPanel_Drop" AllowDrop="True">
+    <DockPanel>
+        <Menu DockPanel.Dock="Top" MaxHeight="20">
+            <MenuItem Header="Файл" Height="20" MaxHeight="20" FontSize="13">
+                <MenuItem Header="Создать" Click="CreateFileDialog" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Открыть" Click="OpenFileDialog" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Сохранить" Name="SaveOption" Click="SaveFileDialog" IsEnabled="False" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Сохранить как" Name="SaveAsOption" Click="SaveAsFileDialog" IsEnabled="False" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Закрыть" Name="CloseOption" Click="CloseTab" IsEnabled="False" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Выход" Name="CloseFileOption" Click="CloseWindow" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+            </MenuItem>
+            <MenuItem Header="Правка" Name="EditOption" IsEnabled="False" Height="20" MaxHeight="20" FontSize="13">
+                <MenuItem Header="Отменить" Click="Undo" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Повторить" Click="Redo" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Вырезать" Click="Cut" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Копировать" Click="Copy" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Вставить" Click="Paste" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Удалить" Click="Delete" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Выделить все" Click="SelectAll" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+            </MenuItem>
+            <MenuItem Header="Текст" Height="20" MaxHeight="20" FontSize="13">
+                <MenuItem Header="Постановка задачи" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Грамматика" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Классификация грамматики" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Метод анализа" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Диагностика и нейтрализация ошибок" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Тестовый пример" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Список литературы" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Исходный код программы" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+            </MenuItem>
+            <MenuItem Header="Справка" Height="20" MaxHeight="20" FontSize="13">
+                <MenuItem Header="Вызов справки" Click="CallHelp" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="О программе" Click="CallAbout" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+            </MenuItem>
+            <MenuItem Header="Пуск" Name="RunOption" IsEnabled="False" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+        </Menu>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Height="20" MaxHeight="20" ToolTip="Создать файл" Click="CreateFileDialog">
+                <MenuItem.Header>
+                    <fa:IconBlock Icon="SquarePlus"></fa:IconBlock>
+                </MenuItem.Header>
+            </MenuItem>
+            <MenuItem Height="20" MaxHeight="20" ToolTip="Открыть файл" Click="OpenFileDialog">
+                <MenuItem.Header>
+                    <fa:IconBlock Icon="FolderOpen"></fa:IconBlock>
+                </MenuItem.Header>
+            </MenuItem>
+            <MenuItem Height="20" MaxHeight="20" ToolTip="Сохранить файл" Click="SaveFileDialog" Name="SaveButton" IsEnabled="False">
+                <MenuItem.Header>
+                    <fa:IconBlock Icon="Save"></fa:IconBlock>
+                </MenuItem.Header>
+            </MenuItem>
+            <MenuItem Height="20" MaxHeight="20" ToolTip="Отмена изменений" Name="CancelButton" IsEnabled="False" Click="Undo">
+                <MenuItem.Header>
+                    <fa:IconBlock Icon="CircleLeft"></fa:IconBlock>
+                </MenuItem.Header>
+            </MenuItem>
+            <MenuItem Height="20" MaxHeight="20" ToolTip="Повтор последнего действия" Name="RepeatButton" IsEnabled="False" Click="Redo">
+                <MenuItem.Header>
+                    <fa:IconBlock Icon="CircleRight"></fa:IconBlock>
+                </MenuItem.Header>
+            </MenuItem>
+            <MenuItem Height="20" MaxHeight="20" ToolTip="Копировать" Name="CopyButton" IsEnabled="False" Click="Copy">
+                <MenuItem.Header>
+                    <fa:IconBlock Icon="Copy"></fa:IconBlock>
+                </MenuItem.Header>
+            </MenuItem>
+            <MenuItem Height="20" MaxHeight="20" ToolTip="Вырезать" Name="CutButton" IsEnabled="False" Click="Cut">
+                <MenuItem.Header>
+                    <fa:IconBlock Icon="Cut"></fa:IconBlock>
+                </MenuItem.Header>
+            </MenuItem>
+            <MenuItem Height="20" MaxHeight="20" ToolTip="Вставить" Name="PasteButton" IsEnabled="False" Click="Paste">
+                <MenuItem.Header>
+                    <fa:IconBlock Icon="Paste"></fa:IconBlock>
+                </MenuItem.Header>
+            </MenuItem>
+            <MenuItem Height="20" MaxHeight="20" ToolTip="Пуск" IsEnabled="False" Name ="RunButton">
+                <MenuItem.Header>
+                    <fa:IconBlock Icon="Play"></fa:IconBlock>
+                </MenuItem.Header>
+            </MenuItem>
+            <MenuItem Height="20" MaxHeight="20" ToolTip="Справка" Click="CallHelp">
+                <MenuItem.Header>
+                    <fa:IconBlock Icon="CircleQuestion"></fa:IconBlock>
+                </MenuItem.Header>
+            </MenuItem>
+            <MenuItem Height="20" MaxHeight="20" ToolTip="О программе" Click="CallAbout">
+                <MenuItem.Header>
+                    <fa:IconBlock Icon="InfoCircle"></fa:IconBlock>
+                </MenuItem.Header>
+            </MenuItem>
+            <MenuItem Height="20" MaxHeight="20" ToolTip="Закрытие вкладки" Name="CloseBtn" Click="CloseTab" IsEnabled="False">
+                <MenuItem.Header>
+                    <fa:IconBlock Icon="WindowClose"></fa:IconBlock>
+                </MenuItem.Header>
+            </MenuItem>
+        </Menu>
+        <Grid Name="grid">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20*"/>
+                <RowDefinition Height="109*"/>
+                <RowDefinition Height="68*"/>
+            </Grid.RowDefinitions>
+            <GridSplitter Grid.Column="0" Grid.Row="2" VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="5" Background="Black"></GridSplitter>
+            <TabControl Grid.RowSpan="2" Background="Black" Name="tabCont">
+            </TabControl>
+            <ComboBox Name="InputFont" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Bottom" IsEditable="True" ToolTip="Размер шрифта в окне редактирования" SelectedIndex="1" SelectionChanged="InputFont_SelectionChanged">
+                <ComboBoxItem Content="10"></ComboBoxItem>
+                <ComboBoxItem Content="14"></ComboBoxItem>
+                <ComboBoxItem Content="25"></ComboBoxItem>
+                <ComboBoxItem Content="50"></ComboBoxItem>
+                <ComboBoxItem Content="75"></ComboBoxItem>
+                <ComboBoxItem Content="100"></ComboBoxItem>
+            </ComboBox>
 
-    </Grid>
+            <DataGrid Name="dataGridResult" Grid.Row="2" VerticalAlignment="Top" Margin="0,5,0,10" 
+                      AutoGenerateColumns="False" IsReadOnly="True"
+                      GridLinesVisibility="Vertical" FontSize="10">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Код"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Тип"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Описание" Width="*"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Строка"></DataGridTextColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+
+
+            <ComboBox Name="OutputFont" Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                      IsEditable="True" ToolTip="Размер шрифта в окне вывода" 
+                      SelectedIndex="0" SelectionChanged="OutputFont_SelectionChanged">
+                <ComboBoxItem Content="10"></ComboBoxItem>
+                <ComboBoxItem Content="14"></ComboBoxItem>
+                <ComboBoxItem Content="25"></ComboBoxItem>
+                <ComboBoxItem Content="50"></ComboBoxItem>
+                <ComboBoxItem Content="75"></ComboBoxItem>
+                <ComboBoxItem Content="100"></ComboBoxItem>
+            </ComboBox>
+
+            <Label Name="Condition" Grid.Row="2" Content="Ожидание" HorizontalAlignment="Left" VerticalAlignment="Bottom"></Label>
+        </Grid>
+    </DockPanel>
 </Window>
