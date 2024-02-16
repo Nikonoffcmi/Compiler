@@ -6,13 +6,10 @@
         xmlns:ae="http://icsharpcode.net/sharpdevelop/avalonedit"
         xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
         xmlns:local="clr-namespace:Compiler"
-        xmlns:mv="clr-namespace:Compiler"
         mc:Ignorable="d"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        Title="Text editor" Height="450" Width="800" WindowStartupLocation="CenterScreen" Closing="MainWindow_Closing">
-    <Window.DataContext>
-        <local:MainWindowModel></local:MainWindowModel>
-    </Window.DataContext>
+        Title="Text editor" Height="450" Width="800" 
+        WindowStartupLocation="CenterScreen" Closing="MainWindow_Closing" Drop="DockPanel_Drop" AllowDrop="True">
     <DockPanel>
         <Menu DockPanel.Dock="Top" MaxHeight="20">
             <MenuItem Header="Файл" Height="20" MaxHeight="20" FontSize="13">
@@ -20,7 +17,7 @@
                 <MenuItem Header="Открыть" Click="OpenFileDialog" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
                 <MenuItem Header="Сохранить" Name="SaveOption" Click="SaveFileDialog" IsEnabled="False" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
                 <MenuItem Header="Сохранить как" Name="SaveAsOption" Click="SaveAsFileDialog" IsEnabled="False" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
-                <MenuItem Header="Выход" Name="CloseFileOption" Click="CloseFile" IsEnabled="False" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Выход" Name="CloseFileOption" Click="CloseWindow" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
             </MenuItem>
             <MenuItem Header="Правка" Name="EditOption" IsEnabled="False" Height="20" MaxHeight="20" FontSize="13">
                 <MenuItem Header="Отменить" Click="Undo" Height="20" MaxHeight="20" FontSize="13"></MenuItem>

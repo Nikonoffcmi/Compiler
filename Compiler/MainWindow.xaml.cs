@@ -215,6 +215,11 @@ namespace Compiler
             PasteButton.IsEnabled = false;
             filename = "";*/
         }
+
+        private void CloseWindow(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
         void MainWindow_Closing(object sender, CancelEventArgs e)
         {
             if (tabCont.Items.Count > 0)
@@ -342,6 +347,56 @@ namespace Compiler
                 return new FileInfo(openFileDialog.FileName);
             }
             return null;
+        }
+
+        private void DockPanel_Drop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                var dialog = (string[])e.Data.GetData(DataFormats.FileDrop);
+                if (tabFilename.Contains(dialog[0]))
+                {
+                    tabCont.SelectedItem = tabCont.Items.GetItemAt(tabFilename.IndexOf(dialog[0]));
+                    return;
+                }
+
+                var filename = System.IO.Path.GetFileName(dialog[0]);
+                string text;
+
+                using (StreamReader reader = new StreamReader(dialog[0]))
+                {
+                    text = reader.ReadToEnd();
+                }
+
+                var txtEdit = new TextEditor()
+                {
+                    WordWrap = true,
+                    ShowLineNumbers = true,
+                    LineNumbersForeground = Brushes.Black,
+                    FontFamily = new System.Windows.Media.FontFamily("Consolas"),
+                    SyntaxHighlighting = ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinitionByExtension(System.IO.Path.GetExtension(filename)),
+                    FontSize = inputFonsize,
+                    Text = text
+                };
+
+                var newTab = new TabItem { Header = filename, Content = txtEdit, ToolTip = dialog[0] };
+                var tt = tabCont.Items.Add(newTab);
+                tabCont.SelectedItem = newTab;
+                tabFilename.Add(dialog[0]);
+
+                SaveAsOption.IsEnabled = true;
+                SaveButton.IsEnabled = true;
+                SaveOption.IsEnabled = true;
+                RunButton.IsEnabled = true;
+                RunOption.IsEnabled = true;
+                CloseFileOption.IsEnabled = true;
+                EditOption.IsEnabled = true;
+                CancelButton.IsEnabled = true;
+                RepeatButton.IsEnabled = true;
+                CopyButton.IsEnabled = true;
+                CutButton.IsEnabled = true;
+                PasteButton.IsEnabled = true;
+            }
         }
     }
 }
