@@ -25,6 +25,8 @@ namespace Compiler
     /// </summary>
     public partial class MainWindow : Window
     {
+        private int inputFonsize = 14;
+        private int outputFonsize = 10;
         public MainWindow()
         {
             InitializeComponent();
@@ -62,7 +64,7 @@ namespace Compiler
                     LineNumbersForeground = Brushes.Black,
                     FontFamily = new System.Windows.Media.FontFamily("Consolas"),
                     SyntaxHighlighting = ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinitionByExtension(System.IO.Path.GetExtension(filename)),
-                    FontSize = 13
+                    FontSize = inputFonsize
                 };
 
                 var newTab = new TabItem { Header = filename, Content = txtEdit, ToolTip = dialog.FileName };
@@ -158,7 +160,7 @@ namespace Compiler
                     LineNumbersForeground = Brushes.Black,
                     FontFamily = new System.Windows.Media.FontFamily("Consolas"),
                     SyntaxHighlighting = ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinitionByExtension(System.IO.Path.GetExtension(filename)),
-                    FontSize = 13,
+                    FontSize = inputFonsize,
                     Text = text
                 };
 
@@ -217,7 +219,7 @@ namespace Compiler
         {
             if (tabCont.Items.Count > 0)
             {
-                var mb = MessageBox.Show("Сохранить изменения?", "Подтверждение сохранения", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                var mb = MessageBox.Show("Сохранить изменения?", "Подтверждение сохранения", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
                 if (mb == MessageBoxResult.Yes)
                 {
                     foreach (TabItem item in tabCont.Items)
@@ -229,11 +231,50 @@ namespace Compiler
                         }
                     }
                 }
-                else
-                {
+                else if (mb == MessageBoxResult.Cancel) {
                     e.Cancel = true;
                     return;
                 }
+                else
+                {
+                }
+            }
+        }
+
+        private void OutputFont_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (OutputFont.SelectedValue == null)
+            {
+                dataGridResult.FontSize = 10;
+            }
+            else
+            {
+                var size = Convert.ToInt32(OutputFont.SelectedValue.ToString().Replace("System.Windows.Controls.ComboBoxItem: ", ""));
+                dataGridResult.FontSize = size;
+                outputFonsize = size;
+            }
+
+        }
+        private void InputFont_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (InputFont.SelectedValue == null)
+            {
+                foreach (TabItem item in tabCont.Items)
+                {
+                    var te = item.Content as ICSharpCode.AvalonEdit.TextEditor;
+                    te.FontSize = 14;
+                }
+                inputFonsize = 14;
+            }
+            else
+            {
+                var size = Convert.ToInt32(InputFont.SelectedValue.ToString().Replace("System.Windows.Controls.ComboBoxItem: ", ""));
+                foreach (TabItem item in tabCont.Items)
+                {
+                    var te = item.Content as ICSharpCode.AvalonEdit.TextEditor;
+                    te.FontSize = size;
+                }
+                inputFonsize = size;
             }
         }
 

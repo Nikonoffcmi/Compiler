@@ -98,6 +98,7 @@ namespace Compiler
         //private TabModel? _selectedTab;
 
         public int[] _isDarkTheme = new int[4];
+        public int _DarkTheme = 50;
 
 
         public MainWindowModel()
