@@ -41,7 +41,6 @@ namespace Compiler
             dialog.Filter = "All Files (*.*)|*.*"; 
 
             bool? result = dialog.ShowDialog();
-
             if (result == true)
             {
                 if (tabFilename.Contains(dialog.FileName)){
@@ -77,14 +76,16 @@ namespace Compiler
                 SaveOption.IsEnabled = true;
                 RunButton.IsEnabled = true;
                 RunOption.IsEnabled = true;
-                CloseFileOption.IsEnabled = true;
                 EditOption.IsEnabled = true;
                 CancelButton.IsEnabled = true;
                 RepeatButton.IsEnabled = true;
                 CopyButton.IsEnabled = true;
                 CutButton.IsEnabled = true;
                 PasteButton.IsEnabled = true;
+                CloseBtn.IsEnabled = true;
+                CloseOption.IsEnabled = true;
                 fs.Close();
+                Condition.Content = "Редактирование";
             }
         }
         private void SaveAsFileDialog(object sender, RoutedEventArgs e)
@@ -174,46 +175,61 @@ namespace Compiler
                 SaveOption.IsEnabled = true;
                 RunButton.IsEnabled = true;
                 RunOption.IsEnabled = true;
-                CloseFileOption.IsEnabled = true;
                 EditOption.IsEnabled = true;
                 CancelButton.IsEnabled = true;
                 RepeatButton.IsEnabled = true;
                 CopyButton.IsEnabled = true;
                 CutButton.IsEnabled = true;
-                PasteButton.IsEnabled = true;
+                PasteButton.IsEnabled = true; 
+                CloseBtn.IsEnabled = true;
+                CloseOption.IsEnabled = true;
+
+                Condition.Content = "Редактирование";
             }
         }
 
 
-        private void CloseFile(object sender, RoutedEventArgs e)
+        private void CloseTab(object sender, RoutedEventArgs e)
         {
             var tb = tabCont.SelectedItem as TabItem;
             var te = tb.Content as ICSharpCode.AvalonEdit.TextEditor;
-            var mb = MessageBox.Show("Сохранить изменения?", "Подтверждение сохранения", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            var mb = MessageBox.Show("Сохранить изменения?", "Подтверждение сохранения", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
             if (mb == MessageBoxResult.Yes)
             {
                 using (StreamWriter writer = new StreamWriter(tb.ToolTip.ToString(), false))
                 {
                     writer.WriteLineAsync(te.Text);
                 }
+
+                tabFilename.Remove(tb.ToolTip.ToString());
+                tabCont.Items.Remove(tb);
+            }
+            else if (mb == MessageBoxResult.No)
+            {
+                tabFilename.Remove(tb.ToolTip.ToString());
+                tabCont.Items.Remove(tb);
             }
             else
                 return;
 
-            /*Input.IsEnabled = false;
-            SaveAsOption.IsEnabled = false;
-            SaveButton.IsEnabled = false;
-            SaveOption.IsEnabled = false;
-            RunButton.IsEnabled = false;
-            RunOption.IsEnabled = false;
-            CloseFileOption.IsEnabled = false;
-            EditOption.IsEnabled = false;
-            CancelButton.IsEnabled = false;
-            RepeatButton.IsEnabled = false;
-            CopyButton.IsEnabled = false;
-            CutButton.IsEnabled = false;
-            PasteButton.IsEnabled = false;
-            filename = "";*/
+            if (tabCont.Items.Count <= 0)
+            {
+                SaveAsOption.IsEnabled = false;
+                SaveButton.IsEnabled = false;
+                SaveOption.IsEnabled = false;
+                RunButton.IsEnabled = false;
+                RunOption.IsEnabled = false;
+                EditOption.IsEnabled = false;
+                CancelButton.IsEnabled = false;
+                RepeatButton.IsEnabled = false;
+                CopyButton.IsEnabled = false;
+                CutButton.IsEnabled = false;
+                PasteButton.IsEnabled = false;
+                CloseOption.IsEnabled = false; 
+                CloseBtn.IsEnabled = false;
+                Condition.Content = "Ожидание";
+            }
+
         }
 
         private void CloseWindow(object sender, RoutedEventArgs e)
@@ -400,13 +416,15 @@ namespace Compiler
                 SaveOption.IsEnabled = true;
                 RunButton.IsEnabled = true;
                 RunOption.IsEnabled = true;
-                CloseFileOption.IsEnabled = true;
                 EditOption.IsEnabled = true;
                 CancelButton.IsEnabled = true;
                 RepeatButton.IsEnabled = true;
                 CopyButton.IsEnabled = true;
                 CutButton.IsEnabled = true;
                 PasteButton.IsEnabled = true;
+                CloseBtn.IsEnabled = true;
+                CloseOption.IsEnabled = true;
+                Condition.Content = "Редактирование";
             }
         }
     }

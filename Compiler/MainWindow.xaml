@@ -17,6 +17,7 @@
                 <MenuItem Header="Открыть" Click="OpenFileDialog" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
                 <MenuItem Header="Сохранить" Name="SaveOption" Click="SaveFileDialog" IsEnabled="False" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
                 <MenuItem Header="Сохранить как" Name="SaveAsOption" Click="SaveAsFileDialog" IsEnabled="False" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Закрыть" Name="CloseOption" Click="CloseTab" IsEnabled="False" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
                 <MenuItem Header="Выход" Name="CloseFileOption" Click="CloseWindow" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
             </MenuItem>
             <MenuItem Header="Правка" Name="EditOption" IsEnabled="False" Height="20" MaxHeight="20" FontSize="13">
@@ -100,6 +101,11 @@
                     <fa:IconBlock Icon="InfoCircle"></fa:IconBlock>
                 </MenuItem.Header>
             </MenuItem>
+            <MenuItem Height="20" MaxHeight="20" ToolTip="Закрытие вкладки" Name="CloseBtn" Click="CloseTab" IsEnabled="False">
+                <MenuItem.Header>
+                    <fa:IconBlock Icon="WindowClose"></fa:IconBlock>
+                </MenuItem.Header>
+            </MenuItem>
         </Menu>
         <Grid Name="grid">
             <Grid.RowDefinitions>
@@ -141,6 +147,8 @@
                 <ComboBoxItem Content="75"></ComboBoxItem>
                 <ComboBoxItem Content="100"></ComboBoxItem>
             </ComboBox>
+
+            <Label Name="Condition" Grid.Row="2" Content="Ожидание" HorizontalAlignment="Left" VerticalAlignment="Bottom"></Label>
         </Grid>
     </DockPanel>
 </Window>
