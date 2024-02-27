@@ -17,6 +17,7 @@ using System.Xml.Linq;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit;
 using Microsoft.Win32;
+using System.Diagnostics;
 
 namespace Compiler
 {
@@ -367,8 +368,12 @@ namespace Compiler
 
         private void CallHelp(object sender, RoutedEventArgs e)
         {
-            var callHelp = new Help();
-            callHelp.ShowDialog();
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(@"HTMLPage1.html")
+            {
+                UseShellExecute = true
+            };
+            p.Start();
         }
         private void CallAbout(object sender, RoutedEventArgs e)
         {
