@@ -9,76 +9,92 @@ namespace Compiler
 {
     class Lex
     {
-        public  int id {  get; set; }
+        public  string id {  get; set; }
         public  string lex {  get; set; }
         public  string val { get; set; }
-        public int start {  get; set; }
-        public int end { get; set; }
+        public int line { get; set; }
+        public string startEnd {  get; set; }
 
-        public Lex(int id, string lex, string val, int start, int end)
+        public Lex(string id, string lex, string val,  int start, int end, int line)
         {
             this.id = id;
             this.lex = lex;
             this.val = val;
-            this.start = start;
-            this.end = end;
+            startEnd = "C " + start.ToString() + " по " + end.ToString() + " символ";
+            this.line = line;
         }
     }
     internal class LexicalAnalyzer
     {
-        private Dictionary<string, int> Words = new Dictionary<string, int>()
+        private Dictionary<string, string> Words = new Dictionary<string, string>()
         {
-            { "type", 1 },
-            { "struct", 2 },
-            { "int", 4 },
-            { "float32", 5 },
-            { "string", 6 }
+            { "type", "1" },
+            { "struct", "2" },
+            { "int", "4" },
+            { "float", "5" },
+            { "string", "6" }
         }; 
-        private Dictionary<char, int> Separators = new Dictionary<char, int>()
+        private Dictionary<char, string> Separators = new Dictionary<char, string>()
         {
-            { ' ', 7 },
-            { '\n', 8 },
-            { '\r', 8 },
-            { '{', 9 },
-            { '}', 10 },
-            { '\t', 11 }
+            { ' ', "7" },
+            { '\n', "8" },
+            { '\r', "8" },
+            { '{', "9" },
+            { '}', "10" },
+            { '\t', "11" }
         };
         public List<Lex> Lexemes = new List<Lex>();
         private string buf = ""; 
 
         public void AnalysisText(string AllTextProgram)
         {
-            for (int i = 0; i < AllTextProgram.Length; i++)
+            var lines = AllTextProgram.Split('\n');
+            int lineCount = 1;
+            foreach (var line in lines)
             {
-                char c = AllTextProgram[i];
-                if (Char.IsLetter(c))
+                int start = 0, end = 0;
+                for (int i = 0; i < line.Length; i++)
                 {
-                    buf += c;
+                    char c = line[i];
+                    if (Char.IsLetter(c))
+                    {
+                        if (buf == "")
+                            start = i + 1;
+                        buf += c;                        
+                    }
+                    else if (Separators.Keys.Contains(c))
+                    {
+                        end = i;
+                        if (buf != "")
+                            Result(buf, lineCount, start, end);
+                        buf = c.ToString();
+                        start = end = i + 1;
+                        Result(buf, lineCount, start, end);
+                        buf = "";
+                    }
+                    else if (buf != "")
+                    {
+                        end = i + 1;
+                        var lex = new Lex("ERROR" , "Недопустимый символ", buf + c.ToString(), start, end, lineCount );
+                        Lexemes.Add(lex);
+                        buf = "";
+                    }
+                    else
+                    {
+                        start = end = i + 1;
+                        var lex = new Lex("ERROR", "Недопустимый символ", c.ToString(), start, end, lineCount);
+                        Lexemes.Add(lex);
+                    }
                 }
-                else if (Separators.Keys.Contains(c) && buf != "")
-                {
-                    Result(buf);
-                    buf = c.ToString();
-                    Result(buf);
-                    buf = "";
-                }
-                else if (buf != "")
-                {
-                    Result(buf);
-                    buf = "";
-                }
-                else
-                {
-                    Result(c.ToString());
-                }
+                lineCount++;
             }
         }
 
-        private void Result(string temp)
+        private void Result(string temp, int line, int start, int end)
         {
             if (Words.Keys.Contains(temp))
             {
-                var lex = new Lex(Words[temp], "ключевое слово", temp, 0, 1);
+                var lex = new Lex(Words[temp], "Ключевое слово", temp, start, end, line);
                 Lexemes.Add(lex);
                 return;
             }
@@ -86,36 +102,36 @@ namespace Compiler
             {
                 string lex = "";
                 string val = "";
-                if (temp[0] == '\r' || temp[0] == '\t')
+                if (temp[0] == '\n' || temp[0] == '\t')
                     return;
                 switch (Separators[temp[0]])
                 {
-                    case 7:
-                        lex = "разделитель";
+                    case "7":
+                        lex = "Разделитель";
                         val = "(пробел)";
                         break;
-                    case 8:
-                        lex = "переход на новую строку";
+                    case "8":
+                        lex = "Переход на новую строку";
                         val = "\\n";
                         break;
-                    case 9:
-                        lex = "начало блока данных";
+                    case "9":
+                        lex = "Начало блока данных";
                         val = "{";
                         break;
-                    case 10:
-                        lex = "конец блока данных";
+                    case "10":
+                        lex = "Конец блока данных";
                         val = "}";
                         break;
                     default:
                         break;
                 }
-                var lexem = new Lex(Separators[temp[0]], lex, val, 0, 1);
+                var lexem = new Lex(Separators[temp[0]], lex, val, start, end, line);
                 Lexemes.Add(lexem);
                 return;
             }
             else
             {
-                var lex = new Lex(0, "Error недопустимый символ", temp, 0, 1);
+                var lex = new Lex("3", "Идентификатор", temp, start, end, line);
                 Lexemes.Add(lex);
                 return;
             }

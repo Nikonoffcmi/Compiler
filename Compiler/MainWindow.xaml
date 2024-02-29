@@ -9,7 +9,8 @@
         mc:Ignorable="d"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         Title="Text editor" Height="450" Width="800" 
-        WindowStartupLocation="CenterScreen" Closing="MainWindow_Closing" Drop="DockPanel_Drop" AllowDrop="True">
+        WindowStartupLocation="CenterScreen" Closing="MainWindow_Closing" Drop="DockPanel_Drop" AllowDrop="True"
+        WindowState="Maximized">
     <DockPanel>
         <Menu DockPanel.Dock="Top" MaxHeight="20">
             <MenuItem Header="Файл" Height="20" MaxHeight="20" FontSize="13">
@@ -125,22 +126,22 @@
                 <ComboBoxItem Content="100"></ComboBoxItem>
             </ComboBox>
 
-            <DataGrid Name="dataGridResult" Grid.Row="2" VerticalAlignment="Top" Margin="0,5,0,10" 
+            <DataGrid Name="dataGridResult" Grid.Row="2" VerticalAlignment="Top" Margin="0,5,10,30" 
                       AutoGenerateColumns="False" IsReadOnly="True"
                       GridLinesVisibility="Vertical" FontSize="10">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Код" Binding="{Binding id}"></DataGridTextColumn>
                     <DataGridTextColumn Header="Тип" Binding="{Binding lex}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Лексема" Width="*" Binding="{Binding val}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Строка" Binding="{Binding start}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Символ" Binding="{Binding end}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Лексема" Binding="{Binding val}" Width="*"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Строка" Binding="{Binding line}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Символ" Binding="{Binding startEnd}" Width="*"></DataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>
 
 
             <ComboBox Name="OutputFont" Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Right"
                       IsEditable="True" ToolTip="Размер шрифта в окне вывода" 
-                      SelectedIndex="0" SelectionChanged="OutputFont_SelectionChanged">
+                      SelectedIndex="1" SelectionChanged="OutputFont_SelectionChanged">
                 <ComboBoxItem Content="10"></ComboBoxItem>
                 <ComboBoxItem Content="14"></ComboBoxItem>
                 <ComboBoxItem Content="25"></ComboBoxItem>
@@ -148,8 +149,6 @@
                 <ComboBoxItem Content="75"></ComboBoxItem>
                 <ComboBoxItem Content="100"></ComboBoxItem>
             </ComboBox>
-
-            <Label Name="Condition" Grid.Row="2" Content="Ожидание" HorizontalAlignment="Left" VerticalAlignment="Bottom"></Label>
         </Grid>
     </DockPanel>
 </Window>

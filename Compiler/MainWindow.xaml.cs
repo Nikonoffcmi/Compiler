@@ -66,7 +66,7 @@ namespace Compiler
                     ShowLineNumbers = true,
                     LineNumbersForeground = Brushes.Black,
                     FontFamily = new System.Windows.Media.FontFamily("Consolas"),
-                    SyntaxHighlighting = ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinitionByExtension(System.IO.Path.GetExtension(filename)),
+                    SyntaxHighlighting = ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinition("C#"),
                     FontSize = inputFonsize
                 };
 
@@ -90,7 +90,6 @@ namespace Compiler
                 RunButton.IsEnabled = true;
                 CloseOption.IsEnabled = true;
                 fs.Close();
-                Condition.Content = "Редактирование";
             }
         }
         private void SaveAsFileDialog(object sender, RoutedEventArgs e)
@@ -165,8 +164,8 @@ namespace Compiler
                     ShowLineNumbers = true,
                     LineNumbersForeground = Brushes.Black,
                     FontFamily = new System.Windows.Media.FontFamily("Consolas"),
-                    SyntaxHighlighting = ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinitionByExtension(System.IO.Path.GetExtension(filename)),
-                    FontSize = inputFonsize,
+                    SyntaxHighlighting = ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinition("C#"),
+                FontSize = inputFonsize,
                     Text = text
                 };
 
@@ -190,7 +189,6 @@ namespace Compiler
                 RunButton.IsEnabled = true;
                 CloseOption.IsEnabled = true;
 
-                Condition.Content = "Редактирование";
             }
         }
 
@@ -234,7 +232,6 @@ namespace Compiler
                 CloseOption.IsEnabled = false; 
                 RunButton.IsEnabled = false;
                 CloseBtn.IsEnabled = false;
-                Condition.Content = "Ожидание";
             }
 
         }
@@ -412,7 +409,7 @@ namespace Compiler
                     ShowLineNumbers = true,
                     LineNumbersForeground = Brushes.Black,
                     FontFamily = new System.Windows.Media.FontFamily("Consolas"),
-                    SyntaxHighlighting = ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinitionByExtension(System.IO.Path.GetExtension(filename)),
+                    SyntaxHighlighting = ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinition("C#"),
                     FontSize = inputFonsize,
                     Text = text
                 };
@@ -436,7 +433,6 @@ namespace Compiler
                 CloseBtn.IsEnabled = true;
                 CloseOption.IsEnabled = true;
                 RunButton.IsEnabled = true;
-                Condition.Content = "Редактирование";
             }
         }
 
