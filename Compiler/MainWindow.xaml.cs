@@ -18,6 +18,9 @@ using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit;
 using Microsoft.Win32;
 using System.Diagnostics;
+using System.Windows.Automation.Peers;
+using System.Collections.ObjectModel;
+using System.Data;
 
 namespace Compiler
 {
@@ -84,6 +87,7 @@ namespace Compiler
                 CutButton.IsEnabled = true;
                 PasteButton.IsEnabled = true;
                 CloseBtn.IsEnabled = true;
+                RunButton.IsEnabled = true;
                 CloseOption.IsEnabled = true;
                 fs.Close();
                 Condition.Content = "Редактирование";
@@ -183,6 +187,7 @@ namespace Compiler
                 CutButton.IsEnabled = true;
                 PasteButton.IsEnabled = true; 
                 CloseBtn.IsEnabled = true;
+                RunButton.IsEnabled = true;
                 CloseOption.IsEnabled = true;
 
                 Condition.Content = "Редактирование";
@@ -227,6 +232,7 @@ namespace Compiler
                 CutButton.IsEnabled = false;
                 PasteButton.IsEnabled = false;
                 CloseOption.IsEnabled = false; 
+                RunButton.IsEnabled = false;
                 CloseBtn.IsEnabled = false;
                 Condition.Content = "Ожидание";
             }
@@ -429,8 +435,18 @@ namespace Compiler
                 PasteButton.IsEnabled = true;
                 CloseBtn.IsEnabled = true;
                 CloseOption.IsEnabled = true;
+                RunButton.IsEnabled = true;
                 Condition.Content = "Редактирование";
             }
+        }
+
+        private void Analyzer(object sender, RoutedEventArgs e)
+        {
+            var analyzer = new LexicalAnalyzer();
+            var tb = tabCont.SelectedItem as TabItem;
+            var te = tb.Content as ICSharpCode.AvalonEdit.TextEditor;
+            analyzer.AnalysisText(te.Text);
+            dataGridResult.ItemsSource = analyzer.Lexemes;
         }
     }
 }

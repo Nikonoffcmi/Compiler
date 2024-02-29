@@ -43,7 +43,7 @@
                 <MenuItem Header="Вызов справки" Click="CallHelp" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
                 <MenuItem Header="О программе" Click="CallAbout" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
             </MenuItem>
-            <MenuItem Header="Пуск" Name="RunOption" IsEnabled="False" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+            <MenuItem Header="Пуск" Click="Analyzer" Name="RunOption" IsEnabled="False" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
         </Menu>
         <Menu DockPanel.Dock="Top">
             <MenuItem Height="20" MaxHeight="20" ToolTip="Создать файл" Click="CreateFileDialog">
@@ -86,7 +86,7 @@
                     <fa:IconBlock Icon="Paste"></fa:IconBlock>
                 </MenuItem.Header>
             </MenuItem>
-            <MenuItem Height="20" MaxHeight="20" ToolTip="Пуск" IsEnabled="False" Name ="RunButton">
+            <MenuItem Height="20" Click="Analyzer" MaxHeight="20" ToolTip="Пуск" IsEnabled="False" Name ="RunButton">
                 <MenuItem.Header>
                     <fa:IconBlock Icon="Play"></fa:IconBlock>
                 </MenuItem.Header>
@@ -129,10 +129,11 @@
                       AutoGenerateColumns="False" IsReadOnly="True"
                       GridLinesVisibility="Vertical" FontSize="10">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Код"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Тип"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Описание" Width="*"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Строка"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Код" Binding="{Binding id}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Тип" Binding="{Binding lex}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Лексема" Width="*" Binding="{Binding val}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Строка" Binding="{Binding start}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Символ" Binding="{Binding end}"></DataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>
 
