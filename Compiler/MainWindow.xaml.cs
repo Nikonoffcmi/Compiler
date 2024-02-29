@@ -372,7 +372,7 @@ namespace Compiler
         private void CallHelp(object sender, RoutedEventArgs e)
         {
             var p = new Process();
-            p.StartInfo = new ProcessStartInfo(@"HTMLPage1.html")
+            p.StartInfo = new ProcessStartInfo(@"C:\Users\Никита\Documents\уник\6\Теория формальных языков и компиляторов\Compiler\Compiler\HTMLPage1.html")
             {
                 UseShellExecute = true
             };
