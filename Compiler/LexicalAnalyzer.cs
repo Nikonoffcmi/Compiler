@@ -102,7 +102,7 @@ namespace Compiler
             {
                 string lex = "";
                 string val = "";
-                if (temp[0] == '\n' || temp[0] == '\t')
+                if (temp[0] == '\n')
                     return;
                 switch (Separators[temp[0]])
                 {
@@ -121,6 +121,10 @@ namespace Compiler
                     case "10":
                         lex = "Конец блока данных";
                         val = "}";
+                        break;
+                    case "11":
+                        lex = "Табуляция";
+                        val = "\\t";
                         break;
                     default:
                         break;
