@@ -130,11 +130,12 @@
                       AutoGenerateColumns="False" IsReadOnly="True"
                       GridLinesVisibility="All" FontSize="10">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Код" Binding="{Binding id}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Тип" Binding="{Binding lex}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Лексема" Binding="{Binding val}" Width="*"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Номер" Binding="{Binding idx}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Орисание" Binding="{Binding message}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="фрагмент" Binding="{Binding incorrStr}" Width="*"></DataGridTextColumn>
                     <DataGridTextColumn Header="Строка" Binding="{Binding line}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Символ" Binding="{Binding startEnd}" Width="*"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Символ" Binding="{Binding start}" Width="*"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Символ" Binding="{Binding end}" Width="*"></DataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>
 

@@ -372,7 +372,7 @@ namespace Compiler
         private void CallHelp(object sender, RoutedEventArgs e)
         {
             var p = new Process();
-            p.StartInfo = new ProcessStartInfo(@"C:\Users\Никита\Documents\уник\6\Теория формальных языков и компиляторов\Compiler\Compiler\HTMLPage1.html")
+            p.StartInfo = new ProcessStartInfo(@"..\..\..\HTMLPage1.html")
             {
                 UseShellExecute = true
             };
@@ -438,11 +438,11 @@ namespace Compiler
 
         private void Analyzer(object sender, RoutedEventArgs e)
         {
-            var analyzer = new LexicalAnalyzer();
+            var parcer = new Parser();
             var tb = tabCont.SelectedItem as TabItem;
             var te = tb.Content as ICSharpCode.AvalonEdit.TextEditor;
-            analyzer.AnalysisText(te.Text);
-            dataGridResult.ItemsSource = analyzer.Lexemes;
+            parcer.Parse(te.Text);
+            dataGridResult.ItemsSource = parcer.GetErrors();
         }
     }
 }

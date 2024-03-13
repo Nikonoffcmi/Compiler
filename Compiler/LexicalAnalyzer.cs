@@ -13,14 +13,16 @@ namespace Compiler
         public  string lex {  get; set; }
         public  string val { get; set; }
         public int line { get; set; }
-        public string startEnd {  get; set; }
+        public int start {  get; set; }
+        public int end {  get; set; }
 
         public Lex(string id, string lex, string val,  int start, int end, int line)
         {
             this.id = id;
             this.lex = lex;
             this.val = val;
-            startEnd = "C " + start.ToString() + " по " + end.ToString() + " символ";
+            this.start = start;
+            this.end = end;
             this.line = line;
         }
     }
@@ -74,7 +76,10 @@ namespace Compiler
                     }
                     else if (buf != "")
                     {
-                        end = i + 1;
+                        end = i;
+                        Result(buf, lineCount, start, end);
+                        start = end = i + 1;
+                        buf = "";
                         var lex = new Lex("ERROR" , "Недопустимый символ", buf + c.ToString(), start, end, lineCount );
                         Lexemes.Add(lex);
                         buf = "";
@@ -86,7 +91,14 @@ namespace Compiler
                         Lexemes.Add(lex);
                     }
                 }
-                lineCount++;
+                lineCount++; 
+                if (buf != "")
+                {
+                    end = buf.Length;
+                    if (buf != "")
+                        Result(buf, lineCount, start, end);
+                    buf = "";
+                }
             }
         }
 
@@ -108,11 +120,11 @@ namespace Compiler
                 {
                     case "7":
                         lex = "Разделитель";
-                        val = "(пробел)";
+                        val = " ";
                         break;
                     case "8":
                         lex = "Переход на новую строку";
-                        val = "\\n";
+                        val = "<новая строка>";
                         break;
                     case "9":
                         lex = "Начало блока данных";
@@ -124,7 +136,7 @@ namespace Compiler
                         break;
                     case "11":
                         lex = "Табуляция";
-                        val = "\\t";
+                        val = "<табуляция>";
                         break;
                     default:
                         break;
