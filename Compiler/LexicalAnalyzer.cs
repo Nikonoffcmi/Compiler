@@ -91,14 +91,13 @@ namespace Compiler
                         Lexemes.Add(lex);
                     }
                 }
-                lineCount++; 
                 if (buf != "")
                 {
-                    end = buf.Length;
                     if (buf != "")
-                        Result(buf, lineCount, start, end);
+                        Result(buf, lineCount, start, line.Length);
                     buf = "";
                 }
+                lineCount++; 
             }
         }
 

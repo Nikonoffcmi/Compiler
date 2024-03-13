@@ -48,11 +48,19 @@ namespace Compiler
         {
             var analyzer = new LexicalAnalyzer();
             analyzer.AnalysisText(text);
-            lexemes = analyzer.Lexemes;
-            lex = lexemes[0];
-            state = 1;
-            incorrStr = "";
             errors = new List<ParseError>();
+            lexemes = analyzer.Lexemes;
+            if (lexemes.Count < 1)
+            {
+                id++;
+                var error = new ParseError(id, "Ожидался буквенный символ", "", 1, 1, 1);
+                errors.Add(error);
+                incorrStr = "";
+                return false;
+            }
+            lex = lexemes[0];
+            incorrStr = "";
+            state = 1;
 
             while (state != 15)
             {
@@ -119,18 +127,17 @@ namespace Compiler
             return true;
         }
 
-
-
-        private void handleError()
+        private void handleError(string msg, string str, int line, int start, int end)
         {
-            
-
+            id++;
+            var error1 = new ParseError(id, msg, str, line, start, end);
+            errors.Add(error1);
         }
         private bool NextOrEnd() 
         {
             if (!NextLex())
             {
-                state = 13;
+                state = 15;
                 return false;
             }
             else
@@ -139,19 +146,28 @@ namespace Compiler
 
         private void state1()
         {
-            if (lex.val == "<новая строка>")
+            if (lex.val == "<новая строка>" || lex.val == " ")
             {
-                NextOrEnd();
+                if (!NextOrEnd())
+                {
+                    if (incorrStr != "")
+                    {
+                        handleError("Неожиданный символ", incorrStr, lex.line, start, incorrStr.Length);
+                        incorrStr = "";
+                    }
+
+                    handleError("Ожидался буквенный символ", "", lex.line, lex.start, lex.end);
+                    incorrStr = "";
+                }
             }
             else if (char.IsLetter(lex.val[0]))
             {
                 if (incorrStr != "")
                 {
-                    id++;
-                    var error = new ParseError(id, "Неожиданный символ", incorrStr, lex.line, start, incorrStr.Length);
-                    errors.Add(error);
+                    handleError("Неожиданный символ", incorrStr, lex.line, start, incorrStr.Length);
                     incorrStr = "";
                 }
+
                 state = 2;
                 corrStr += lex.val;
             }
@@ -161,7 +177,18 @@ namespace Compiler
                     start = lex.start;
 
                 incorrStr += lex.val;
-                NextOrEnd();
+
+                if (!NextOrEnd())
+                {
+                    if (incorrStr != "")
+                    {
+                        handleError("Неожиданный символ", incorrStr, lex.line, start, incorrStr.Length);
+                        incorrStr = "";
+                    }
+
+                    handleError("Ожидался буквенный символ", "", lex.line, lex.start, lex.end);
+                    incorrStr = "";
+                }
             }
         }
 
@@ -185,9 +212,7 @@ namespace Compiler
                 {
                     if (incorrStr != "")
                     {
-                        id++;
-                        var error1 = new ParseError(id, "Неожиданный символ", incorrStr, lex.line, start, lex.end - lex.val.Length);
-                        errors.Add(error1);
+                        handleError("Неожиданный символ", incorrStr, lex.line, start, lex.end - lex.val.Length);
                         incorrStr = "";
                     }
                     corrStr += lex.val;
@@ -196,23 +221,29 @@ namespace Compiler
 
             if (incorrStr != "")
             {
-                id++;
-                var error1 = new ParseError(id, "Неожиданный символ", incorrStr, lex.line, start, lex.end - lex.val.Length);
-                errors.Add(error1);
+                handleError("Неожиданный символ", incorrStr, lex.line, start, lex.end - lex.val.Length);
                 incorrStr = "";
             }
 
             if (corrStr.Equals("type"))
             {
-                state = 3;
+                if (!NextOrEnd() & !lex.val.Equals(" "))
+                {
+                    handleError("Ожидался символ <пробел>", "", lex.line, lex.end, lex.end);
+                }
+                else
+                    state = 3;
+                corrStr = "";
             }
             else
             {
-                start = lex.start;
-                id++;
-                var error = new ParseError(id, "Ожидалось ключевое слово type.", lex.val, lex.line, start, lex.end);
-                errors.Add(error);
-                state = 3;
+                handleError("Ожидалось ключевое слово type.", "", lex.line, lex.end, lex.end);
+                if (!NextOrEnd() & !lex.val.Equals(" "))
+                {
+                    handleError("Ожидался символ <пробел>", "", lex.line, lex.end, lex.end);
+                }
+                else
+                    state = 3;
                 corrStr = "";
             }
         }
@@ -221,15 +252,23 @@ namespace Compiler
         {
             if (lex.val == " ")
             {
-                NextOrEnd();
+                if (!NextOrEnd())
+                {
+                    if (incorrStr != "")
+                    {
+                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length -1);
+                        incorrStr = "";
+                    }
+
+                    handleError("Ожидался буквенный символ", "", lex.line, lex.start, lex.end);
+                    incorrStr = "";
+                }
             }
             else if (char.IsLetter(lex.val[0]))
             {
                 if (incorrStr != "")
                 {
-                    id++;
-                    var error = new ParseError(id, "Неожиданный символ", incorrStr, lex.line, start, incorrStr.Length);
-                    errors.Add(error);
+                    handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
                     incorrStr = "";
                 }
                 state = 4;
@@ -241,7 +280,18 @@ namespace Compiler
                     start = lex.start;
 
                 incorrStr += lex.val;
-                NextOrEnd();
+
+                if (!NextOrEnd())
+                {
+                    if (incorrStr != "")
+                    {
+                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        incorrStr = "";
+                    }
+
+                    handleError("Ожидался буквенный символ", "", lex.line, lex.start, lex.end);
+                    incorrStr = "";
+                }
             }
         }
 
@@ -265,9 +315,7 @@ namespace Compiler
                 {
                     if (incorrStr != "")
                     {
-                        id++;
-                        var error1 = new ParseError(id, "Неожиданный символ", incorrStr, lex.line, start, lex.end - lex.val.Length);
-                        errors.Add(error1);
+                        handleError("Неожиданный символ", incorrStr, lex.line, start, lex.end - lex.val.Length);
                         incorrStr = "";
                     }
                     corrStr += lex.val;
@@ -276,29 +324,56 @@ namespace Compiler
 
             if (incorrStr != "")
             {
-                id++;
-                var error1 = new ParseError(id, "Неожиданный символ", incorrStr, lex.line, start, lex.end - lex.val.Length);
-                errors.Add(error1);
+                handleError("Неожиданный символ", incorrStr, lex.line, start, lex.end - lex.val.Length);
                 incorrStr = "";
             }
 
-            state = 5;
-            corrStr = "";
+            if (corrStr.Equals("type") || corrStr.Equals("struct") || corrStr.Equals("int") || corrStr.Equals("float") || corrStr.Equals("string"))
+            {
+
+                handleError("Имя переменной не может быть ключивым словам", corrStr, lex.line, lex.end, lex.end);
+                corrStr = "";
+
+                if (!NextOrEnd() & !lex.val.Equals(" "))
+                {
+                    handleError("Ожидался символ <пробел>", "", lex.line, lex.end, lex.end);
+                }
+                else
+                    state = 5;
+            }
+            else
+            {
+                if (!NextOrEnd() & !lex.val.Equals(" "))
+                {
+                    handleError("Ожидался символ <пробел>", "", lex.line, lex.end, lex.end);
+                }
+                else
+                    state = 5;
+                corrStr = "";
+            }
         }
 
         private void state5()
         {
             if (lex.val == " ")
             {
-                NextOrEnd();
+                if (!NextOrEnd())
+                {
+                    if (incorrStr != "")
+                    {
+                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        incorrStr = "";
+                    }
+
+                    handleError("Ожидался буквенный символ", "", lex.line, lex.start, lex.end);
+                    incorrStr = "";
+                }
             }
             else if (char.IsLetter(lex.val[0]))
             {
                 if (incorrStr != "")
                 {
-                    id++;
-                    var error = new ParseError(id, "Неожиданный символ", incorrStr, lex.line, start, incorrStr.Length);
-                    errors.Add(error);
+                    handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
                     incorrStr = "";
                 }
                 state = 6;
@@ -310,7 +385,17 @@ namespace Compiler
                     start = lex.start;
 
                 incorrStr += lex.val;
-                NextOrEnd();
+                if (!NextOrEnd())
+                {
+                    if (incorrStr != "")
+                    {
+                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        incorrStr = "";
+                    }
+
+                    handleError("Ожидался буквенный символ", "", lex.line, lex.start, lex.end);
+                    incorrStr = "";
+                }
             }
         }
 
@@ -334,9 +419,7 @@ namespace Compiler
                 {
                     if (incorrStr != "")
                     {
-                        id++;
-                        var error1 = new ParseError(id, "Неожиданный символ", incorrStr, lex.line, start, lex.end - lex.val.Length);
-                        errors.Add(error1);
+                        handleError("Неожиданный символ", incorrStr, lex.line, start, lex.end - lex.val.Length);
                         incorrStr = "";
                     }
                     corrStr += lex.val;
@@ -345,34 +428,48 @@ namespace Compiler
 
             if (incorrStr != "")
             {
-                id++;
-                var error1 = new ParseError(id, "Неожиданный символ", incorrStr, lex.line, start, lex.end - lex.val.Length);
-                errors.Add(error1);
+                handleError("Неожиданный символ", incorrStr, lex.line, start, lex.end - lex.val.Length);
                 incorrStr = "";
             }
 
             if (corrStr.Equals("struct"))
             {
-                if (lex.val == " ")
+                if (!lex.val.Equals(" ") & !lex.val.Equals("{"))
+                {
+                    handleError("Ожидался символ <пробел> либо '{'", "", lex.line, lex.end, lex.end);
+                }
+                else if (lex.val.Equals(" "))
                     state = 7;
-                else
+                else if (lex.val.Equals("{"))
                 {
                     state = 8;
-                    NextOrEnd();
+                    if (!NextOrEnd())
+                    {
+                        handleError("Ожидался символ <новая строка>", "", lex.line, lex.start, lex.end);
+                        incorrStr = "";
+                    }
                 }
+                corrStr = "";
             }
             else
             {
-                start = lex.start;
-                id++;
-                var error = new ParseError(id, "Ожидалось ключевое слово struct.", lex.val, lex.line, start, lex.end);
-                errors.Add(error);
-                if (lex.val == " ")
+                handleError("Ожидалось ключевое слово struct.", "", lex.line, lex.end, lex.end);
+
+                if (!lex.val.Equals(" ") & !lex.val.Equals("{"))
+                {
+                    handleError("Ожидался символ <пробел> либо '{'", "", lex.line, lex.end, lex.end);
+                }
+                else if (lex.val.Equals(" "))
                     state = 7;
-                else
+                else if (lex.val.Equals("{"))
                 {
                     state = 8;
-                    NextOrEnd();
+
+                    if (!NextOrEnd())
+                    {
+                        handleError("Ожидался символ <новая строка>", "", lex.line, lex.start, lex.end);
+                        incorrStr = "";
+                    }
                 }
                 corrStr = "";
             }
@@ -382,19 +479,31 @@ namespace Compiler
         {
             if (lex.val == " ")
             {
-                NextOrEnd();
+                if (!NextOrEnd())
+                {
+                    if (incorrStr != "")
+                    {
+                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        incorrStr = "";
+                    }
+
+                    handleError("Ожидался символ '{'", "", lex.line, lex.start, lex.end);
+                    incorrStr = "";
+                }
             }
             else if (lex.val == "{")
             {
                 if (incorrStr != "")
                 {
-                    id++;
-                    var error = new ParseError(id, "Неожиданный символ", incorrStr, lex.line, start, incorrStr.Length);
-                    errors.Add(error);
+                    handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
                     incorrStr = "";
                 }
                 state = 8;
-                NextOrEnd();
+                if (!NextOrEnd())
+                {
+                    handleError("Ожидался символ <новая строка>", "", lex.line, lex.start, lex.end);
+                    incorrStr = "";
+                }
                 corrStr += lex.val;
             }
             else
@@ -403,7 +512,17 @@ namespace Compiler
                     start = lex.start;
 
                 incorrStr += lex.val;
-                NextOrEnd();
+                if (!NextOrEnd())
+                {
+                    if (incorrStr != "")
+                    {
+                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        incorrStr = "";
+                    }
+
+                    handleError("Ожидался символ '{'", "", lex.line, lex.start, lex.end);
+                    incorrStr = "";
+                }
             }
         }
 
@@ -411,19 +530,31 @@ namespace Compiler
         {
             if (lex.val == " ")
             {
-                NextOrEnd();
+                if (!NextOrEnd())
+                {
+                    if (incorrStr != "")
+                    {
+                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        incorrStr = "";
+                    }
+
+                    handleError("Ожидался символ <новая строка>", "", lex.line, lex.start, lex.end);
+                    incorrStr = "";
+                }
             }
             else if (lex.val == "<новая строка>")
             {
                 if (incorrStr != "")
                 {
-                    id++;
-                    var error = new ParseError(id, "Неожиданный символ", incorrStr, lex.line, start, incorrStr.Length);
-                    errors.Add(error);
+                    handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
                     incorrStr = "";
                 }
                 state = 9;
-                NextOrEnd();
+                if (!NextOrEnd())
+                {
+                    handleError("Ожидался символ <табуляция>", "", lex.line, lex.start, lex.end);
+                    incorrStr = "";
+                }
                 corrStr += lex.val;
             }
             else
@@ -432,7 +563,18 @@ namespace Compiler
                     start = lex.start;
 
                 incorrStr += lex.val;
-                NextOrEnd();
+
+                if (!NextOrEnd())
+                {
+                    if (incorrStr != "")
+                    {
+                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        incorrStr = "";
+                    }
+
+                    handleError("Ожидался символ <новая строка>", "", lex.line, lex.start, lex.end);
+                    incorrStr = "";
+                }
             }
         }
 
@@ -440,19 +582,37 @@ namespace Compiler
         {
             if (lex.val == " ")
             {
-                NextOrEnd();
+                if (!NextOrEnd())
+                {
+                    if (incorrStr != "")
+                    {
+                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        incorrStr = "";
+                    }
+
+                    handleError("Ожидался символ <табуляция>", "", lex.line, lex.start, lex.end);
+                    incorrStr = "";
+                }
             }
             else if (lex.val == "<табуляция>")
             {
                 if (incorrStr != "")
                 {
-                    id++;
-                    var error = new ParseError(id, "Неожиданный символ", incorrStr, lex.line, start, incorrStr.Length);
-                    errors.Add(error);
+                    handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
                     incorrStr = "";
                 }
-                state = 10;
-                NextOrEnd();
+                state = 10; 
+                if (!NextOrEnd())
+                {
+                    if (incorrStr != "")
+                    {
+                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        incorrStr = "";
+                    }
+
+                    handleError("Ожидался буквенный символ", "", lex.line, lex.start, lex.end);
+                    incorrStr = "";
+                }
                 corrStr += lex.val;
             }
             else
@@ -461,7 +621,18 @@ namespace Compiler
                     start = lex.start;
 
                 incorrStr += lex.val;
-                NextOrEnd();
+
+                if (!NextOrEnd())
+                {
+                    if (incorrStr != "")
+                    {
+                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        incorrStr = "";
+                    }
+
+                    handleError("Ожидался символ <табуляция>", "", lex.line, lex.start, lex.end);
+                    incorrStr = "";
+                }
             }
         }
 
@@ -469,15 +640,23 @@ namespace Compiler
         {
             if (lex.val == " ")
             {
-                NextOrEnd();
+                if (!NextOrEnd())
+                {
+                    if (incorrStr != "")
+                    {
+                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        incorrStr = "";
+                    }
+
+                    handleError("Ожидался буквенный символ", "", lex.line, lex.start, lex.end);
+                    incorrStr = "";
+                }
             }
             else if (char.IsLetter(lex.val[0]))
             {
                 if (incorrStr != "")
                 {
-                    id++;
-                    var error = new ParseError(id, "Неожиданный символ", incorrStr, lex.line, start, incorrStr.Length);
-                    errors.Add(error);
+                    handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
                     incorrStr = "";
                 }
                 state = 11;
@@ -490,7 +669,18 @@ namespace Compiler
                     start = lex.start;
 
                 incorrStr += lex.val;
-                NextOrEnd();
+
+                if (!NextOrEnd())
+                {
+                    if (incorrStr != "")
+                    {
+                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        incorrStr = "";
+                    }
+
+                    handleError("Ожидался буквенный символ", "", lex.line, lex.start, lex.end);
+                    incorrStr = "";
+                }
             }
         }
 
@@ -514,9 +704,7 @@ namespace Compiler
                 {
                     if (incorrStr != "")
                     {
-                        id++;
-                        var error1 = new ParseError(id, "Неожиданный символ", incorrStr, lex.line, start, lex.end - lex.val.Length);
-                        errors.Add(error1);
+                        handleError("Неожиданный символ", incorrStr, lex.line, start, lex.end - lex.val.Length);
                         incorrStr = "";
                     }
                     corrStr += lex.val;
@@ -525,29 +713,56 @@ namespace Compiler
 
             if (incorrStr != "")
             {
-                id++;
-                var error1 = new ParseError(id, "Неожиданный символ", incorrStr, lex.line, start, lex.end - lex.val.Length);
-                errors.Add(error1);
+                handleError("Неожиданный символ", incorrStr, lex.line, start, lex.end - lex.val.Length);
                 incorrStr = "";
             }
 
-            state = 12;
-            corrStr = "";
+            if (corrStr.Equals("type") || corrStr.Equals("struct") || corrStr.Equals("int") || corrStr.Equals("float") || corrStr.Equals("string"))
+            {
+
+                handleError("Имя переменной не может быть ключивым словам", corrStr, lex.line, lex.end, lex.end);
+                corrStr = "";
+
+                if (!NextOrEnd() & !lex.val.Equals(" "))
+                {
+                    handleError("Ожидался символ <пробел>", "", lex.line, lex.end, lex.end);
+                }
+                else
+                    state = 12;
+            }
+            else
+            {
+                if (!NextOrEnd() & !lex.val.Equals(" "))
+                {
+                    handleError("Ожидался символ <пробел>", "", lex.line, lex.end, lex.end);
+                }
+                else
+                    state = 12;
+                corrStr = "";
+            }
         }
 
         private void state12()
         {
             if (lex.val == " ")
             {
-                NextOrEnd();
+                if (!NextOrEnd())
+                {
+                    if (incorrStr != "")
+                    {
+                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        incorrStr = "";
+                    }
+
+                    handleError("Ожидался буквенный символ", "", lex.line, lex.start, lex.end);
+                    incorrStr = "";
+                }
             }
             else if (char.IsLetter(lex.val[0]))
             {
                 if (incorrStr != "")
                 {
-                    id++;
-                    var error = new ParseError(id, "Неожиданный символ", incorrStr, lex.line, start, incorrStr.Length);
-                    errors.Add(error);
+                    handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
                     incorrStr = "";
                 }
                 state = 13;
@@ -559,7 +774,17 @@ namespace Compiler
                     start = lex.start;
 
                 incorrStr += lex.val;
-                NextOrEnd();
+                if (!NextOrEnd())
+                {
+                    if (incorrStr != "")
+                    {
+                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        incorrStr = "";
+                    }
+
+                    handleError("Ожидался буквенный символ", "", lex.line, lex.start, lex.end);
+                    incorrStr = "";
+                }
             }
         }
 
@@ -571,7 +796,7 @@ namespace Compiler
                 incorrStr += lex.val;
             }
 
-            while (NextOrEnd() & !lex.val.Equals(" ") & !lex.val.Equals("<новая строка>"))
+            while (NextOrEnd() & !lex.val.Equals("<новая строка>"))
             {
                 if (!IsWord(lex.val))
                 {
@@ -583,9 +808,7 @@ namespace Compiler
                 {
                     if (incorrStr != "")
                     {
-                        id++;
-                        var error1 = new ParseError(id, "Неожиданный символ", incorrStr, lex.line, start, lex.end - lex.val.Length);
-                        errors.Add(error1);
+                        handleError("Неожиданный символ", incorrStr, lex.line, start, lex.end - lex.val.Length);
                         incorrStr = "";
                     }
                     corrStr += lex.val;
@@ -594,23 +817,32 @@ namespace Compiler
 
             if (incorrStr != "")
             {
-                id++;
-                var error1 = new ParseError(id, "Неожиданный символ", incorrStr, lex.line, start, lex.end - lex.val.Length);
-                errors.Add(error1);
+                handleError("Неожиданный символ", incorrStr, lex.line, start, lex.end - lex.val.Length);
                 incorrStr = "";
             }
 
             if (corrStr.Equals("int") || corrStr.Equals("float") || corrStr.Equals("string"))
             {
-                state = 14;
+                if (!lex.val.Equals("<новая строка>"))
+                {
+                    handleError("Ожидался символ <новая строка>", "", lex.line, lex.end, lex.end);
+                }
+                else 
+                    state = 14;
+                
+                corrStr = "";
             }
             else
             {
-                start = lex.start;
-                id++;
-                var error = new ParseError(id, "Ожидалось одно из ключевых слов: int, float, string.", lex.val, lex.line, start, lex.end);
-                errors.Add(error);
-                state = 14;
+                handleError("Ожидалось одно из ключевых слов: int, float, string.", "", lex.line, lex.end, lex.end);
+
+                if (!lex.val.Equals("<новая строка>"))
+                {
+                    handleError("Ожидался символ <новая строка>", "", lex.line, lex.end, lex.end);
+                }
+                else
+                    state = 14;
+
                 corrStr = "";
             }
         }
@@ -619,36 +851,66 @@ namespace Compiler
         {
             if (lex.val == " ")
             {
-                NextOrEnd();
+                if (!NextOrEnd())
+                {
+                    if (incorrStr != "")
+                    {
+                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        incorrStr = "";
+                    }
+
+                    handleError("Ожидался символ <табуляция> либо '}'", "", lex.line, lex.start, lex.end);
+                    incorrStr = "";
+                }
             }
             else if (lex.val == "<новая строка>")
             {
-                NextOrEnd();
+                if (!NextOrEnd())
+                {
+                    if (incorrStr != "")
+                    {
+                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        incorrStr = "";
+                    }
+
+                    handleError("Ожидался символ <табуляция> либо '}'", "", lex.line, lex.start, lex.end);
+                    incorrStr = "";
+                }
             }
             else if (lex.val == "<табуляция>")
             {
                 if (incorrStr != "")
                 {
-                    id++;
-                    var error = new ParseError(id, "Неожиданный символ", incorrStr, lex.line, start, incorrStr.Length);
-                    errors.Add(error);
+                    handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
                     incorrStr = "";
                 }
-                state = 10;
-                NextOrEnd();
+                state = 10; 
+                if (!NextOrEnd())
+                {
+                    if (incorrStr != "")
+                    {
+                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        incorrStr = "";
+                    }
+
+                    handleError("Ожидался буквенный символ", "", lex.line, lex.start, lex.end);
+                    incorrStr = "";
+                }
                 corrStr += lex.val;
             }
             else if (lex.val == "}")
             {
                 if (incorrStr != "")
                 {
-                    id++;
-                    var error = new ParseError(id, "Неожиданный символ", incorrStr, lex.line, start, incorrStr.Length);
-                    errors.Add(error);
+                    handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
                     incorrStr = "";
                 }
-                state = 15;
-                NextOrEnd();
+                if (NextOrEnd())
+                {
+                    state = 1;
+                }
+                else
+                    state = 15;
                 corrStr += lex.val;
             }
             else
@@ -657,7 +919,18 @@ namespace Compiler
                     start = lex.start;
 
                 incorrStr += lex.val;
-                NextOrEnd();
+
+                if (!NextOrEnd())
+                {
+                    if (incorrStr != "")
+                    {
+                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        incorrStr = "";
+                    }
+
+                    handleError("Ожидался символ <табуляция> либо '}'", "", lex.line, lex.start, lex.end);
+                    incorrStr = "";
+                }
             }
         }
 

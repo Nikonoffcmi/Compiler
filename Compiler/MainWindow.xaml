@@ -131,7 +131,7 @@
                       GridLinesVisibility="All" FontSize="10">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Номер" Binding="{Binding idx}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Орисание" Binding="{Binding message}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Описание" Binding="{Binding message}"></DataGridTextColumn>
                     <DataGridTextColumn Header="фрагмент" Binding="{Binding incorrStr}" Width="*"></DataGridTextColumn>
                     <DataGridTextColumn Header="Строка" Binding="{Binding line}"></DataGridTextColumn>
                     <DataGridTextColumn Header="Символ" Binding="{Binding start}" Width="*"></DataGridTextColumn>
