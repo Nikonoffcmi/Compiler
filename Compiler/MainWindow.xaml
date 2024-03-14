@@ -128,14 +128,14 @@
 
             <DataGrid Name="dataGridResult" Grid.Row="2" VerticalAlignment="Top" Margin="0,5,10,30" 
                       AutoGenerateColumns="False" IsReadOnly="True"
-                      GridLinesVisibility="All" FontSize="10">
+                      GridLinesVisibility="All" FontSize="10" SelectionUnit="FullRow" 
+                      SelectionChanged="dataGridResult_SelectionChanged" MouseDoubleClick="dataGridResult_MouseDoubleClick">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Номер" Binding="{Binding idx}"></DataGridTextColumn>
                     <DataGridTextColumn Header="Описание" Binding="{Binding message}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="фрагмент" Binding="{Binding incorrStr}" Width="*"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Фрагмент" Binding="{Binding incorrStr}" Width="*"></DataGridTextColumn>
                     <DataGridTextColumn Header="Строка" Binding="{Binding line}"></DataGridTextColumn>
                     <DataGridTextColumn Header="Символ" Binding="{Binding start}" Width="*"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Символ" Binding="{Binding end}" Width="*"></DataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>
 

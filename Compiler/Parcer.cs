@@ -36,6 +36,8 @@ namespace Compiler
         private string incorrStr;
         private string corrStr;
         private int start;
+        private int end;
+        private int line = 1;
 
         private List<ParseError> errors;
 
@@ -152,7 +154,7 @@ namespace Compiler
                 {
                     if (incorrStr != "")
                     {
-                        handleError("Неожиданный символ", incorrStr, lex.line, start, incorrStr.Length);
+                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, incorrStr.Length);
                         incorrStr = "";
                     }
 
@@ -164,7 +166,7 @@ namespace Compiler
             {
                 if (incorrStr != "")
                 {
-                    handleError("Неожиданный символ", incorrStr, lex.line, start, incorrStr.Length);
+                    handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, incorrStr.Length);
                     incorrStr = "";
                 }
 
@@ -174,7 +176,10 @@ namespace Compiler
             else
             {
                 if (incorrStr == "")
+                {
                     start = lex.start;
+                    line = lex.line;
+                }
 
                 incorrStr += lex.val;
 
@@ -182,7 +187,7 @@ namespace Compiler
                 {
                     if (incorrStr != "")
                     {
-                        handleError("Неожиданный символ", incorrStr, lex.line, start, incorrStr.Length);
+                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, incorrStr.Length);
                         incorrStr = "";
                     }
 
@@ -196,8 +201,14 @@ namespace Compiler
         {
             if (!IsWord(lex.val))
             {
-                start = lex.start;
+                if (incorrStr == "")
+                {
+                    start = lex.start;
+                    line = lex.line;
+                }
                 incorrStr += lex.val;
+                end = lex.end;
+
             }
 
             while (NextOrEnd() & !lex.val.Equals(" "))
@@ -205,14 +216,19 @@ namespace Compiler
                 if (!IsWord(lex.val))
                 {
                     if (incorrStr == "")
+                    {
                         start = lex.start;
+                        line = lex.line;
+                    }
                     incorrStr += lex.val;
+                    end = lex.end;
+
                 }
                 else
                 {
                     if (incorrStr != "")
                     {
-                        handleError("Неожиданный символ", incorrStr, lex.line, start, lex.end - lex.val.Length);
+                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, end);
                         incorrStr = "";
                     }
                     corrStr += lex.val;
@@ -221,7 +237,7 @@ namespace Compiler
 
             if (incorrStr != "")
             {
-                handleError("Неожиданный символ", incorrStr, lex.line, start, lex.end - lex.val.Length);
+                handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, end);
                 incorrStr = "";
             }
 
@@ -256,7 +272,7 @@ namespace Compiler
                 {
                     if (incorrStr != "")
                     {
-                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length -1);
+                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length -1);
                         incorrStr = "";
                     }
 
@@ -268,7 +284,7 @@ namespace Compiler
             {
                 if (incorrStr != "")
                 {
-                    handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                    handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
                     incorrStr = "";
                 }
                 state = 4;
@@ -277,7 +293,10 @@ namespace Compiler
             else
             {
                 if (incorrStr == "")
+                {
                     start = lex.start;
+                    line = lex.line;
+                }
 
                 incorrStr += lex.val;
 
@@ -285,7 +304,7 @@ namespace Compiler
                 {
                     if (incorrStr != "")
                     {
-                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
                         incorrStr = "";
                     }
 
@@ -299,7 +318,11 @@ namespace Compiler
         {
             if (!IsWord(lex.val))
             {
-                start = lex.start;
+                if (incorrStr == "")
+                {
+                    start = lex.start;
+                    line = lex.line;
+                }
                 incorrStr += lex.val;
             }
 
@@ -308,14 +331,17 @@ namespace Compiler
                 if (!IsWord(lex.val))
                 {
                     if (incorrStr == "")
+                    {
                         start = lex.start;
+                        line = lex.line;
+                    }
                     incorrStr += lex.val;
                 }
                 else
                 {
                     if (incorrStr != "")
                     {
-                        handleError("Неожиданный символ", incorrStr, lex.line, start, lex.end - lex.val.Length);
+                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, lex.end - lex.val.Length);
                         incorrStr = "";
                     }
                     corrStr += lex.val;
@@ -324,14 +350,14 @@ namespace Compiler
 
             if (incorrStr != "")
             {
-                handleError("Неожиданный символ", incorrStr, lex.line, start, lex.end - lex.val.Length);
+                handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, lex.end - lex.val.Length);
                 incorrStr = "";
             }
 
             if (corrStr.Equals("type") || corrStr.Equals("struct") || corrStr.Equals("int") || corrStr.Equals("float") || corrStr.Equals("string"))
             {
 
-                handleError("Имя переменной не может быть ключивым словам", corrStr, lex.line, lex.end, lex.end);
+                handleError("Имя переменной не может быть ключивым словом", corrStr, lex.line, lex.end, lex.end);
                 corrStr = "";
 
                 if (!NextOrEnd() & !lex.val.Equals(" "))
@@ -361,7 +387,7 @@ namespace Compiler
                 {
                     if (incorrStr != "")
                     {
-                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
                         incorrStr = "";
                     }
 
@@ -373,7 +399,7 @@ namespace Compiler
             {
                 if (incorrStr != "")
                 {
-                    handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                    handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
                     incorrStr = "";
                 }
                 state = 6;
@@ -382,14 +408,17 @@ namespace Compiler
             else
             {
                 if (incorrStr == "")
+                {
                     start = lex.start;
+                    line = lex.line;
+                }
 
                 incorrStr += lex.val;
                 if (!NextOrEnd())
                 {
                     if (incorrStr != "")
                     {
-                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
                         incorrStr = "";
                     }
 
@@ -403,7 +432,11 @@ namespace Compiler
         {
             if (!IsWord(lex.val))
             {
-                start = lex.start;
+                if (incorrStr == "")
+                {
+                    start = lex.start;
+                    line = lex.line;
+                }
                 incorrStr += lex.val;
             }
 
@@ -412,14 +445,17 @@ namespace Compiler
                 if (!IsWord(lex.val))
                 {
                     if (incorrStr == "")
+                    {
                         start = lex.start;
+                        line = lex.line;
+                    }
                     incorrStr += lex.val;
                 }
                 else
                 {
                     if (incorrStr != "")
                     {
-                        handleError("Неожиданный символ", incorrStr, lex.line, start, lex.end - lex.val.Length);
+                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, lex.end - lex.val.Length);
                         incorrStr = "";
                     }
                     corrStr += lex.val;
@@ -428,7 +464,7 @@ namespace Compiler
 
             if (incorrStr != "")
             {
-                handleError("Неожиданный символ", incorrStr, lex.line, start, lex.end - lex.val.Length);
+                handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, lex.end - lex.val.Length);
                 incorrStr = "";
             }
 
@@ -483,7 +519,7 @@ namespace Compiler
                 {
                     if (incorrStr != "")
                     {
-                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
                         incorrStr = "";
                     }
 
@@ -495,7 +531,7 @@ namespace Compiler
             {
                 if (incorrStr != "")
                 {
-                    handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                    handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
                     incorrStr = "";
                 }
                 state = 8;
@@ -509,14 +545,17 @@ namespace Compiler
             else
             {
                 if (incorrStr == "")
+                {
                     start = lex.start;
+                    line = lex.line;
+                }
 
                 incorrStr += lex.val;
                 if (!NextOrEnd())
                 {
                     if (incorrStr != "")
                     {
-                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
                         incorrStr = "";
                     }
 
@@ -534,7 +573,7 @@ namespace Compiler
                 {
                     if (incorrStr != "")
                     {
-                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
                         incorrStr = "";
                     }
 
@@ -546,7 +585,7 @@ namespace Compiler
             {
                 if (incorrStr != "")
                 {
-                    handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                    handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
                     incorrStr = "";
                 }
                 state = 9;
@@ -560,7 +599,10 @@ namespace Compiler
             else
             {
                 if (incorrStr == "")
+                {
                     start = lex.start;
+                    line = lex.line;
+                }
 
                 incorrStr += lex.val;
 
@@ -568,7 +610,7 @@ namespace Compiler
                 {
                     if (incorrStr != "")
                     {
-                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
                         incorrStr = "";
                     }
 
@@ -586,7 +628,7 @@ namespace Compiler
                 {
                     if (incorrStr != "")
                     {
-                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
                         incorrStr = "";
                     }
 
@@ -598,7 +640,7 @@ namespace Compiler
             {
                 if (incorrStr != "")
                 {
-                    handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                    handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
                     incorrStr = "";
                 }
                 state = 10; 
@@ -606,7 +648,7 @@ namespace Compiler
                 {
                     if (incorrStr != "")
                     {
-                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
                         incorrStr = "";
                     }
 
@@ -618,7 +660,10 @@ namespace Compiler
             else
             {
                 if (incorrStr == "")
+                {
                     start = lex.start;
+                    line = lex.line;
+                }
 
                 incorrStr += lex.val;
 
@@ -626,7 +671,7 @@ namespace Compiler
                 {
                     if (incorrStr != "")
                     {
-                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
                         incorrStr = "";
                     }
 
@@ -644,7 +689,7 @@ namespace Compiler
                 {
                     if (incorrStr != "")
                     {
-                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
                         incorrStr = "";
                     }
 
@@ -656,7 +701,7 @@ namespace Compiler
             {
                 if (incorrStr != "")
                 {
-                    handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                    handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
                     incorrStr = "";
                 }
                 state = 11;
@@ -666,7 +711,10 @@ namespace Compiler
             else
             {
                 if (incorrStr == "")
+                {
                     start = lex.start;
+                    line = lex.line;
+                }
 
                 incorrStr += lex.val;
 
@@ -674,7 +722,7 @@ namespace Compiler
                 {
                     if (incorrStr != "")
                     {
-                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
                         incorrStr = "";
                     }
 
@@ -688,7 +736,11 @@ namespace Compiler
         {
             if (!IsWord(lex.val))
             {
-                start = lex.start;
+                if (incorrStr == "")
+                {
+                    start = lex.start;
+                    line = lex.line;
+                }
                 incorrStr += lex.val;
             }
 
@@ -697,14 +749,17 @@ namespace Compiler
                 if (!IsWord(lex.val))
                 {
                     if (incorrStr == "")
+                    {
                         start = lex.start;
+                        line = lex.line;
+                    }
                     incorrStr += lex.val;
                 }
                 else
                 {
                     if (incorrStr != "")
                     {
-                        handleError("Неожиданный символ", incorrStr, lex.line, start, lex.end - lex.val.Length);
+                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, lex.end - lex.val.Length);
                         incorrStr = "";
                     }
                     corrStr += lex.val;
@@ -713,14 +768,14 @@ namespace Compiler
 
             if (incorrStr != "")
             {
-                handleError("Неожиданный символ", incorrStr, lex.line, start, lex.end - lex.val.Length);
+                handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, lex.end - lex.val.Length);
                 incorrStr = "";
             }
 
             if (corrStr.Equals("type") || corrStr.Equals("struct") || corrStr.Equals("int") || corrStr.Equals("float") || corrStr.Equals("string"))
             {
 
-                handleError("Имя переменной не может быть ключивым словам", corrStr, lex.line, lex.end, lex.end);
+                handleError("Имя переменной не может быть ключивым словом", corrStr, lex.line, lex.end, lex.end);
                 corrStr = "";
 
                 if (!NextOrEnd() & !lex.val.Equals(" "))
@@ -750,7 +805,7 @@ namespace Compiler
                 {
                     if (incorrStr != "")
                     {
-                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
                         incorrStr = "";
                     }
 
@@ -762,7 +817,7 @@ namespace Compiler
             {
                 if (incorrStr != "")
                 {
-                    handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                    handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
                     incorrStr = "";
                 }
                 state = 13;
@@ -771,14 +826,17 @@ namespace Compiler
             else
             {
                 if (incorrStr == "")
+                {
                     start = lex.start;
+                    line = lex.line;
+                }
 
                 incorrStr += lex.val;
                 if (!NextOrEnd())
                 {
                     if (incorrStr != "")
                     {
-                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
                         incorrStr = "";
                     }
 
@@ -792,7 +850,11 @@ namespace Compiler
         {
             if (!IsWord(lex.val))
             {
-                start = lex.start;
+                if (incorrStr == "")
+                {
+                    start = lex.start;
+                    line = lex.line;
+                }
                 incorrStr += lex.val;
             }
 
@@ -801,14 +863,17 @@ namespace Compiler
                 if (!IsWord(lex.val))
                 {
                     if (incorrStr == "")
+                    {
                         start = lex.start;
+                        line = lex.line;
+                    }
                     incorrStr += lex.val;
                 }
                 else
                 {
                     if (incorrStr != "")
                     {
-                        handleError("Неожиданный символ", incorrStr, lex.line, start, lex.end - lex.val.Length);
+                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, lex.end - lex.val.Length);
                         incorrStr = "";
                     }
                     corrStr += lex.val;
@@ -817,7 +882,7 @@ namespace Compiler
 
             if (incorrStr != "")
             {
-                handleError("Неожиданный символ", incorrStr, lex.line, start, lex.end - lex.val.Length);
+                handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, lex.end - lex.val.Length);
                 incorrStr = "";
             }
 
@@ -855,7 +920,7 @@ namespace Compiler
                 {
                     if (incorrStr != "")
                     {
-                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
                         incorrStr = "";
                     }
 
@@ -869,7 +934,7 @@ namespace Compiler
                 {
                     if (incorrStr != "")
                     {
-                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
                         incorrStr = "";
                     }
 
@@ -881,7 +946,7 @@ namespace Compiler
             {
                 if (incorrStr != "")
                 {
-                    handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                    handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
                     incorrStr = "";
                 }
                 state = 10; 
@@ -889,7 +954,7 @@ namespace Compiler
                 {
                     if (incorrStr != "")
                     {
-                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
                         incorrStr = "";
                     }
 
@@ -902,12 +967,20 @@ namespace Compiler
             {
                 if (incorrStr != "")
                 {
-                    handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                    handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
                     incorrStr = "";
                 }
+
                 if (NextOrEnd())
                 {
-                    state = 1;
+                    while ((lex.val == " " | lex.val == "<новая строка>"))
+                    {
+                        if (state == 15)
+                            break;
+                        NextOrEnd();
+                    }
+                    if (lex.val != " " && lex.val != "<новая строка>")
+                        state = 1;
                 }
                 else
                     state = 15;
@@ -924,7 +997,7 @@ namespace Compiler
                 {
                     if (incorrStr != "")
                     {
-                        handleError("Неожиданный символ", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, lex.line, start, start + incorrStr.Length - 1);
                         incorrStr = "";
                     }
 

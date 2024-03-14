@@ -52,9 +52,9 @@ namespace Compiler
         {
             var lines = AllTextProgram.Split('\n');
             int lineCount = 1;
+            int start = 0, end = 0;
             foreach (var line in lines)
             {
-                int start = 0, end = 0;
                 for (int i = 0; i < line.Length; i++)
                 {
                     char c = line[i];
