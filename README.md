@@ -1,24 +1,17 @@
-# Лексический анализатор (сканер)
-
-<p align="center"><img src="images/screen.png"></p>
+# Синтаксический анализатор для объявления структуры на языке Go.
 
 ## Цель
 
-Изучить назначение лексического анализатора. Спроектировать алгоритм и выполнить программную реализацию сканера.
+Выполнить программную реализацию алгоритма синтаксического анализа для объявления структуры на языке Go.
 
-В соответствии с вариантом задания необходимо:
-
-1. Спроектировать диаграмму состояний сканера (примеры диаграмм представлены в прикрепленных файлах).
-2. Разработать лексический анализатор, позволяющий выделить в тексте лексемы, иные символы считать недопустимыми (выводить ошибку).
-3. Встроить сканер в ранее разработанный интерфейс текстового редактора. Учесть, что текст для разбора может состоять из множества строк.
 ## Вариант задания
 **Объявление структуры на языке Go.**
 
 Пример допустимых строк:
 ```
 type Address struct {
-    Name    string
-    city    string
+    Name string
+    city string
     Pincode int
 }
 
@@ -27,6 +20,81 @@ type student struct {
     age int
 }
 ```
+
+## Разработанная грамматика
+
+1. ‹Def› → ‹Letter›‹TypeRem›
+1. ‹TypeRem› → ‹Letter›‹TypeRem›
+1. ‹TypeRem› → _‹Id›
+1. ‹Id› → ‹Letter›‹IdRem›
+1. ‹IdRem› → ‹Letter›‹IdRem›
+1. ‹IdRem› → _‹Struct›
+1. ‹Struct› → ‹Letter›‹StructRem›
+1. ‹StructRem› → ‹Letter›‹StructRem›
+1. ‹StructRem› → _‹BlockStart›
+1. ‹StructRem› → {‹NewLine›
+1. ‹BlockStart› → {‹NewLine›
+1. ‹NewLine› → \n‹FieldLine›
+1. ‹FieldLine› → \t‹FieldId›
+1. ‹FieldId› → ‹Letter›‹FieldIdRem›
+1. ‹FieldIdRem› → ‹Letter›‹FieldIdRem›
+1. ‹FieldIdRem› → _‹FieldType›
+1. ‹FieldType› → ‹Letter›‹FieldTypeRem›
+1. ‹FieldTypeRem› → ‹Letter›‹FieldTypeRem›
+1. ‹FieldTypeRem› →  \n‹EndBlock›
+1. ‹EndBlock› → \t‹FieldId›
+1. ‹EndBlock› →  }
+- ‹Letter› → “a” | “b” | “c” | ... | “z” | “A” | “B” | “C” | ... | “Z”
+
+Следуя введенному формальному определению грамматики, представим G[‹Def›] ее составляющими:
+- Z = ‹Def›;
+- V<sub>T</sub> = {a, b, c, ..., z, A, B, C, ..., Z, _, {, }, \n, \t};
+- V<sub>N</sub> = {‹Def›, ‹TypeRem›, ‹Id›, ‹IdRem›, ‹Struct› , ‹StructRem›, ‹BlockStart› , ‹NewLine› , ‹FieldLine› , ‹FieldId› , ‹FieldIdRem› , ‹FieldType› , ‹FieldTypeRem› , ‹EndBlock›}.
+
+
+## Классификация грамматики
+
+Согласно классификации Хомского, грамматика G[‹Def›] является автоматной. 
+Правила (1)-(21) относятся к классу праворекурсивных продукций (A → aB | a | ε):
+
+1. ‹Def› → ‹Letter›‹TypeRem›
+1. ‹TypeRem› → ‹Letter›‹TypeRem›
+1. ‹TypeRem› → _‹Id›
+1. ‹Id› → ‹Letter›‹IdRem›
+1. ‹IdRem› → ‹Letter›‹IdRem›
+1. ‹IdRem› → _‹Struct›
+1. ‹Struct› → ‹Letter›‹StructRem›
+1. ‹StructRem› → ‹Letter›‹StructRem›
+1. ‹StructRem› → _‹BlockStart›
+1. ‹StructRem› → {‹NewLine›
+1. ‹BlockStart› → {‹NewLine›
+1. ‹NewLine› → \n‹FieldLine›
+1. ‹FieldLine› → \t‹FieldId›
+1. ‹FieldId› → ‹Letter›‹FieldIdRem›
+1. ‹FieldIdRem› → ‹Letter›‹FieldIdRem›
+1. ‹FieldIdRem› → _‹FieldType›
+1. ‹FieldType› → ‹Letter›‹FieldTypeRem›
+1. ‹FieldTypeRem› → ‹Letter›‹FieldTypeRem›
+1. ‹FieldTypeRem› →  \n‹EndBlock›
+1. ‹EndBlock› → \t‹FieldId›
+1. ‹EndBlock› →  }
+
+## Граф конечного автомата
+
+Грамматика G[‹Def›] является автоматной.
+Правила (1) – (21) для G[‹Def›] реализованы на графе.
+Сплошные стрелки на графе характеризуют синтаксически верный разбор; пунктирные символизируют состояние ошибки (ERROR); и непомеченные дуги предполагают любой терминальный символ, отличный от указанного из соответствующего узла.
+Состояние 15 символизирует успешное завершение разбора.
+
+<p align="center"><img src="images/FSM.png"></p>
+
+## Тестовые примеры
+
+1. <p align="center"><img src="images/lasttest1.png"></p>
+1. <p align="center"><img src="images/lasttest2.png"></p>
+1. <p align="center"><img src="images/lasttest3.png"></p>
+1. <p align="center"><img src="images/lasttest4.png"></p>
+1. <p align="center"><img src="images/lasttest5.png"></p>
 
 ## Диаграмма состояний сканера
 

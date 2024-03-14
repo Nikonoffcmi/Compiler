@@ -989,7 +989,10 @@ namespace Compiler
             else
             {
                 if (incorrStr == "")
+                {
                     start = lex.start;
+                    line = lex.line;
+                }
 
                 incorrStr += lex.val;
 
@@ -997,7 +1000,7 @@ namespace Compiler
                 {
                     if (incorrStr != "")
                     {
-                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, lex.line, start, start + incorrStr.Length - 1);
+                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
                         incorrStr = "";
                     }
 
