@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <h1>
+        Классификация грамматики
+    </h1>
+    <p>
+        Согласно классификации Хомского, грамматика G[‹Def›] является автоматной.<br />
+        Правила (1)-(21) относятся к классу праворекурсивных продукций (A → aB | a | ε):
+    </p>
+    <p>1. ‹Def› → ‹Letter›‹TypeRem›</p>
+    <p>2. ‹TypeRem› → ‹Letter›‹TypeRem›</p>
+    <p>3. ‹TypeRem› → _‹Id›</p>
+    <p>4. ‹Id› → ‹Letter›‹IdRem›</p>
+    <p>5. ‹IdRem› → ‹Letter›‹IdRem›</p>
+    <p>6. ‹IdRem› → _‹Struct›</p>
+    <p>7. ‹Struct› → ‹Letter›‹StructRem››</p>
+    <p>8. ‹StructRem› → ‹Letter›‹StructRem›</p>
+    <p>9. ‹StructRem› → _‹BlockStart›</p>
+    <p>10. ‹StructRem› → {‹NewLine›</p>
+    <p>11. ‹BlockStart› → {‹NewLine›</p>
+    <p>12. ‹NewLine› → \n‹FieldLine›</p>
+    <p>13. ‹FieldLine› → \t‹FieldId›</p>
+    <p>14. ‹FieldId› → ‹Letter›‹FieldIdRem›</p>
+    <p>15. ‹FieldIdRem› → ‹Letter›‹FieldIdRem›</p>
+    <p>16. ‹FieldIdRem› → _‹FieldType›</p>
+    <p>17. ‹FieldType› → ‹Letter›‹FieldTypeRem›</p>
+    <p>18. ‹FieldTypeRem› → ‹Letter›‹FieldTypeRem›</p>
+    <p>19. ‹FieldTypeRem› →  \n‹EndBlock›</p>
+    <p>20. ‹EndBlock› → \t‹FieldId›</p>
+    <p>21. ‹EndBlock› →  }</p>
+</body>
+</html>

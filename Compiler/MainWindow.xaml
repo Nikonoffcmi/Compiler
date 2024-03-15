@@ -31,14 +31,14 @@
                 <MenuItem Header="Выделить все" Click="SelectAll" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
             </MenuItem>
             <MenuItem Header="Текст" Height="20" MaxHeight="20" FontSize="13">
-                <MenuItem Header="Постановка задачи" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
-                <MenuItem Header="Грамматика" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
-                <MenuItem Header="Классификация грамматики" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
-                <MenuItem Header="Метод анализа" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
-                <MenuItem Header="Диагностика и нейтрализация ошибок" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
-                <MenuItem Header="Тестовый пример" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
-                <MenuItem Header="Список литературы" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
-                <MenuItem Header="Исходный код программы" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Постановка задачи" Click="MenuItem_Click" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Грамматика" Click="MenuItem_Click_1" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Классификация грамматики" Click="MenuItem_Click_2" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Метод анализа" Click="MenuItem_Click_3" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Диагностика и нейтрализация ошибок" Click="MenuItem_Click_4" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Тестовый пример" Click="MenuItem_Click_5" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Список литературы" Click="MenuItem_Click_6" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
+                <MenuItem Header="Исходный код программы" Click="MenuItem_Click_7" Height="20" MaxHeight="20" FontSize="13"></MenuItem>
             </MenuItem>
             <MenuItem Header="Справка" Height="20" MaxHeight="20" FontSize="13">
                 <MenuItem Header="Вызов справки" Click="CallHelp" Height="20" MaxHeight="20" FontSize="13"></MenuItem>

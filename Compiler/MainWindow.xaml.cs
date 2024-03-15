@@ -381,11 +381,17 @@ namespace Compiler
                 UseShellExecute = true
             };
             p.Start();
+            p.Close();
         }
         private void CallAbout(object sender, RoutedEventArgs e)
         {
-            var callAbout = new About();
-            callAbout.ShowDialog();
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(@"..\..\..\About.html")
+            {
+                UseShellExecute = true
+            };
+            p.Start();
+            p.Close();
         }
 
         private void DockPanel_Drop(object sender, DragEventArgs e)
@@ -489,6 +495,94 @@ namespace Compiler
                 te.Focus();
                 te.CaretOffset = offs - 1;
             }
+        }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(@"..\..\..\problem.html")
+            {
+                UseShellExecute = true
+            };
+            p.Start();
+            p.Close();
+        }
+
+        private void MenuItem_Click_1(object sender, RoutedEventArgs e)
+        {
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(@"..\..\..\Grammar.html")
+            {
+                UseShellExecute = true
+            };
+            p.Start();
+            p.Close();
+        }
+
+        private void MenuItem_Click_2(object sender, RoutedEventArgs e)
+        {
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(@"..\..\..\Classification.html")
+            {
+                UseShellExecute = true
+            };
+            p.Start();
+            p.Close();
+        }
+
+        private void MenuItem_Click_3(object sender, RoutedEventArgs e)
+        {
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(@"..\..\..\methodAnalysis.html")
+            {
+                UseShellExecute = true
+            };
+            p.Start();
+            p.Close();
+        }
+
+        private void MenuItem_Click_4(object sender, RoutedEventArgs e)
+        {
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(@"..\..\..\Neutralizing.html")
+            {
+                UseShellExecute = true
+            };
+            p.Start();
+            p.Close();
+        }
+
+        private void MenuItem_Click_5(object sender, RoutedEventArgs e)
+        {
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(@"..\..\..\testExamples.html")
+            {
+                UseShellExecute = true
+            };
+            p.Start();
+            p.Close();
+        }
+
+        private void MenuItem_Click_6(object sender, RoutedEventArgs e)
+        {
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(@"..\..\..\LitList.html")
+            {
+                UseShellExecute = true
+            };
+            p.Start();
+            p.Close();
+        }
+
+        private void MenuItem_Click_7(object sender, RoutedEventArgs e)
+        {
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(@"https://github.com/Nikonoffcmi/Compiler")
+            {
+                UseShellExecute = true
+            };
+            p.Start();
+            p.Close();
         }
     }
     public class ColorizeAvalonEdit : DocumentColorizingTransformer
