@@ -9,13 +9,15 @@
 
 Пример допустимых строк:
 ```
-type Address struct {
+type Address struct{
     Name string
     city string
     Pincode int
 }
+```
 
-type student struct {
+```
+type student struct{
     Name string
     age int
 }
@@ -23,66 +25,53 @@ type student struct {
 
 ## Разработанная грамматика
 
-1. ‹Def› → ‹Letter›‹TypeRem›
-1. ‹TypeRem› → ‹Letter›‹TypeRem›
-1. ‹TypeRem› → _‹Id›
-1. ‹Id› → ‹Letter›‹IdRem›
-1. ‹IdRem› → ‹Letter›‹IdRem›
-1. ‹IdRem› → _‹Struct›
-1. ‹Struct› → ‹Letter›‹StructRem›
-1. ‹StructRem› → ‹Letter›‹StructRem›
-1. ‹StructRem› → _‹BlockStart›
-1. ‹StructRem› → {‹NewLine›
-1. ‹BlockStart› → {‹NewLine›
-1. ‹NewLine› → \n‹FieldLine›
-1. ‹FieldLine› → \t‹FieldId›
-1. ‹FieldId› → ‹Letter›‹FieldIdRem›
-1. ‹FieldIdRem› → ‹Letter›‹FieldIdRem›
+1. Def› → ‘type’‹Id›
+1. ‹Id› → _ ‹IdRem› 
+1. ‹IdRem› → Б {Б | Ц} ‹Struct›
+1. ‹Struct› → _‹StructRem›
+1. ‹StructRem› → ‘struct’‹BlockStart›
+1. ‹BlockStart› → ‘{‘‹NewLine›
+1. ‹NewLine› → ’\n’‹FieldLine›
+1. ‹FieldLine› → ‘\t’‹FieldId›
+1. ‹FieldId› → Б {Б | Ц} ‹FieldIdRem›
 1. ‹FieldIdRem› → _‹FieldType›
-1. ‹FieldType› → ‹Letter›‹FieldTypeRem›
-1. ‹FieldTypeRem› → ‹Letter›‹FieldTypeRem›
-1. ‹FieldTypeRem› →  \n‹EndBlock›
-1. ‹EndBlock› → \t‹FieldId›
-1. ‹EndBlock› →  }
-- ‹Letter› → “a” | “b” | “c” | ... | “z” | “A” | “B” | “C” | ... | “Z”
+1. ‹FieldType› →  (‘int’ | ‘string’ | ‘float’) ‹PossibleEnd›
+1. ‹PossibleEnd› →  \n‹EndBlock›
+1. ‹EndBlock› → ’\t’‹FieldId› | ‘}’
+
+- Б → ‘a’ | ‘b’ | … | ‘z’ | ‘A’ | ‘B’ | … | ‘Z’
+- Ц → ‘0’ | ‘1’ | … | ‘9’
+
 
 Следуя введенному формальному определению грамматики, представим G[‹Def›] ее составляющими:
 - Z = ‹Def›;
-- V<sub>T</sub> = {a, b, c, ..., z, A, B, C, ..., Z, _, {, }, \n, \t};
-- V<sub>N</sub> = {‹Def›, ‹TypeRem›, ‹Id›, ‹IdRem›, ‹Struct› , ‹StructRem›, ‹BlockStart› , ‹NewLine› , ‹FieldLine› , ‹FieldId› , ‹FieldIdRem› , ‹FieldType› , ‹FieldTypeRem› , ‹EndBlock›}.
+- V<sub>T</sub> = {a, b, c, ..., z, A, B, C, ..., Z, _, {, }, \n, \t, type, struct, int, float, string};
+- V<sub>N</sub> = {‹Def›, ‹Id›, ‹IdRem›, ‹Struct› , ‹StructRem›, ‹BlockStart› , ‹NewLine› , ‹FieldLine› , ‹FieldId› , ‹FieldIdRem› , ‹FieldType›, ‹PossibleEnd›, ‹EndBlock›}.
 
 
 ## Классификация грамматики
 
 Согласно классификации Хомского, грамматика G[‹Def›] является автоматной. 
-Правила (1)-(21) относятся к классу праворекурсивных продукций (A → aB | a | ε):
+Правила (1)-(13) относятся к классу праворекурсивных продукций (A → aB | a | ε):
 
-1. ‹Def› → ‹Letter›‹TypeRem›
-1. ‹TypeRem› → ‹Letter›‹TypeRem›
-1. ‹TypeRem› → _‹Id›
-1. ‹Id› → ‹Letter›‹IdRem›
-1. ‹IdRem› → ‹Letter›‹IdRem›
-1. ‹IdRem› → _‹Struct›
-1. ‹Struct› → ‹Letter›‹StructRem›
-1. ‹StructRem› → ‹Letter›‹StructRem›
-1. ‹StructRem› → _‹BlockStart›
-1. ‹StructRem› → {‹NewLine›
-1. ‹BlockStart› → {‹NewLine›
-1. ‹NewLine› → \n‹FieldLine›
-1. ‹FieldLine› → \t‹FieldId›
-1. ‹FieldId› → ‹Letter›‹FieldIdRem›
-1. ‹FieldIdRem› → ‹Letter›‹FieldIdRem›
+1. Def› → ‘type’‹Id›
+1. ‹Id› → _ ‹IdRem› 
+1. ‹IdRem› → Б {Б | Ц} ‹Struct›
+1. ‹Struct› → _‹StructRem›
+1. ‹StructRem› → ‘struct’‹BlockStart›
+1. ‹BlockStart› → ‘{‘‹NewLine›
+1. ‹NewLine› → ’\n’‹FieldLine›
+1. ‹FieldLine› → ‘\t’‹FieldId›
+1. ‹FieldId› → Б {Б | Ц} ‹FieldIdRem›
 1. ‹FieldIdRem› → _‹FieldType›
-1. ‹FieldType› → ‹Letter›‹FieldTypeRem›
-1. ‹FieldTypeRem› → ‹Letter›‹FieldTypeRem›
-1. ‹FieldTypeRem› →  \n‹EndBlock›
-1. ‹EndBlock› → \t‹FieldId›
-1. ‹EndBlock› →  }
+1. ‹FieldType› →  (‘int’ | ‘string’ | ‘float’) ‹PossibleEnd›
+1. ‹PossibleEnd› →  \n‹EndBlock›
+1. ‹EndBlock› → ’\t’‹FieldId› | ‘}’
 
 ## Граф конечного автомата
 
 Грамматика G[‹Def›] является автоматной.
-Правила (1) – (21) для G[‹Def›] реализованы на графе.
+Правила (1) – (13) для G[‹Def›] реализованы на графе.
 Сплошные стрелки на графе характеризуют синтаксически верный разбор; пунктирные символизируют состояние ошибки (ERROR); и непомеченные дуги предполагают любой терминальный символ, отличный от указанного из соответствующего узла.
 Состояние 15 символизирует успешное завершение разбора.
 

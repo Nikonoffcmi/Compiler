@@ -252,6 +252,8 @@ namespace Compiler
                         break;
                     if (nextState == 9 && IsWord(lexemes[lexemes.IndexOf(lex)].val))
                         break;
+                    if (nextState == 13 && lex.val.Equals("}"))
+                        break;
                     if (value == " " && IsWord(lexemes[lexemes.IndexOf(lex)].val))
                         break;
                     if (value.Contains(lex.val))
