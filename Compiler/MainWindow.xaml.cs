@@ -446,56 +446,6 @@ namespace Compiler
             }
         }
 
-        private void Analyzer(object sender, RoutedEventArgs e)
-        {
-            var parcer = new Parser();
-            var tb = tabCont.SelectedItem as TabItem;
-            var te = tb.Content as ICSharpCode.AvalonEdit.TextEditor;
-            parcer.Parse(te.Text);
-
-            dataGridResult.ItemsSource = parcer.GetErrors();
-
-            if (dataGridResult.Items.Count < 1)
-            {
-                MessageBox.Show("Ошибки не обнаружились!", "Успех!", MessageBoxButton.OK);
-            }
-
-            //te.TextArea.TextView.LineTransformers.Add(new ColorizeAvalonEdit());
-        }
-
-        private void dataGridResult_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var tb = tabCont.SelectedItem as TabItem;
-            var te = tb.Content as ICSharpCode.AvalonEdit.TextEditor;
-            var pe = dataGridResult.SelectedValue as ParseError;
-            if (pe != null)
-            {
-                int offs = pe.start;
-                for (int i = 1; i < pe.line; i++) 
-                {
-                    offs += te.Document.GetLineByNumber(i).TotalLength;
-                }
-                te.Focus();
-                te.CaretOffset = offs - 1;
-            }
-        }
-
-        private void dataGridResult_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            var tb = tabCont.SelectedItem as TabItem;
-            var te = tb.Content as ICSharpCode.AvalonEdit.TextEditor;
-            var pe = dataGridResult.SelectedValue as ParseError;
-            if (pe != null)
-            {
-                int offs = pe.start;
-                for (int i = 1; i < pe.line; i++)
-                {
-                    offs += te.Document.GetLineByNumber(i).TotalLength;
-                }
-                te.Focus();
-                te.CaretOffset = offs - 1;
-            }
-        }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
@@ -584,6 +534,66 @@ namespace Compiler
             p.Start();
             p.Close();
         }
+
+        private void Analyzer(object sender, RoutedEventArgs e)
+        {
+            var parcer = new Parser();
+            var tb = tabCont.SelectedItem as TabItem;
+            var te = tb.Content as ICSharpCode.AvalonEdit.TextEditor;
+            parcer.Parse(te.Text);
+
+            dataGridResult.ItemsSource = parcer.GetErrors();
+
+            if (dataGridResult.Items.Count < 1)
+            {
+                MessageBox.Show("Ошибки не обнаружились!", "Успех!", MessageBoxButton.OK);
+            }
+
+            //te.TextArea.TextView.LineTransformers.Add(new ColorizeAvalonEdit());
+        }
+
+        private void dataGridResult_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var tb = tabCont.SelectedItem as TabItem;
+            var te = tb.Content as ICSharpCode.AvalonEdit.TextEditor;
+            var pe = dataGridResult.SelectedValue as ParseError;
+            if (pe != null)
+            {
+                int offs = pe.start;
+                int offsend = pe.end + 1;
+                for (int i = 1; i < pe.line; i++) 
+                {
+                    offs += te.Document.GetLineByNumber(i).TotalLength;
+                    offsend += te.Document.GetLineByNumber(i).TotalLength;
+                }
+                te.Focus();
+
+                te.SelectionStart = offs - 1;
+                te.SelectionLength = offsend - offs;
+            }
+        }
+
+        private void dataGridResult_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var tb = tabCont.SelectedItem as TabItem;
+            var te = tb.Content as ICSharpCode.AvalonEdit.TextEditor;
+            var pe = dataGridResult.SelectedValue as ParseError;
+            if (pe != null)
+            {
+                int offs = pe.start;
+                int offsend = pe.end + 1;
+                for (int i = 1; i < pe.line; i++)
+                {
+                    offs += te.Document.GetLineByNumber(i).TotalLength;
+                    offsend += te.Document.GetLineByNumber(i).TotalLength;
+                }
+                te.Focus();
+
+                te.SelectionStart = offs - 1;
+                te.SelectionLength = offsend - offs;
+            }
+        }
+
     }
     public class ColorizeAvalonEdit : DocumentColorizingTransformer
     {

@@ -12,33 +12,28 @@
     <p>
         Определим грамматику для объявления структуры на языке Go G[‹Def›] в нотации Хомского с продукциями P:
     </p>
-    <p>1. ‹Def› → ‹Letter›‹TypeRem›</p>
-    <p>2. ‹TypeRem› → ‹Letter›‹TypeRem›</p>
-    <p>3. ‹TypeRem› → _‹Id›</p>
-    <p>4. ‹Id› → ‹Letter›‹IdRem›</p>
-    <p>5. ‹IdRem› → ‹Letter›‹IdRem›</p>
-    <p>6. ‹IdRem› → _‹Struct›</p>
-    <p>7. ‹Struct› → ‹Letter›‹StructRem››</p>
-    <p>8. ‹StructRem› → ‹Letter›‹StructRem›</p>
-    <p>9. ‹StructRem› → _‹BlockStart›</p>
-    <p>10. ‹StructRem› → {‹NewLine›</p>
-    <p>11. ‹BlockStart› → {‹NewLine›</p>
-    <p>12. ‹NewLine› → \n‹FieldLine›</p>
-    <p>13. ‹FieldLine› → \t‹FieldId›</p>
-    <p>14. ‹FieldId› → ‹Letter›‹FieldIdRem›</p>
-    <p>15. ‹FieldIdRem› → ‹Letter›‹FieldIdRem›</p>
-    <p>16. ‹FieldIdRem› → _‹FieldType›</p>
-    <p>17. ‹FieldType› → ‹Letter›‹FieldTypeRem›</p>
-    <p>18. ‹FieldTypeRem› → ‹Letter›‹FieldTypeRem›</p>
-    <p>19. ‹FieldTypeRem› →  \n‹EndBlock›</p>
-    <p>20. ‹EndBlock› → \t‹FieldId›</p>
-    <p>21. ‹EndBlock› →  }</p>
     <p>
-        ‹Letter› → “a” | “b” | “c” | ... | “z” | “A” | “B” | “C” | ... | “Z”<br />
+        1. ‹Def› → ‘type’‹Id› <br />
+        2. ‹Id› → _ ‹IdRem›<br />
+        3. ‹IdRem› → Б {Б | Ц} ‹Struct›<br />
+        4. ‹Struct› → _‹StructRem›<br />
+        5. ‹StructRem› → ‘struct’‹BlockStart›<br />
+        6. ‹BlockStart› → ‘{‘‹NewLine›<br />
+        7. ‹NewLine› →’ \n’‹FieldLine›<br />
+        8. ‹FieldLine› → ‘\t’‹FieldId›<br />
+        9. ‹FieldId› → Б {Б | Ц} ‹FieldIdRem›<br />
+        10. ‹FieldIdRem› → _‹FieldType›<br />
+        11. ‹FieldType› →  (‘int’ | ‘string’ | ‘float’) ‹PossibleEnd›<br />
+        12. ‹PossibleEnd› →  \n‹EndBlock›<br />
+        13. ‹EndBlock› → ’\t’‹FieldId› | ‘}’<br />
+    </p>
+    <p>
+        Б → ‘a’ | ‘b’ | … | ‘z’ | ‘A’ | ‘B’ | … | ‘Z’<br />
+        Ц → ‘0’ | ‘1’ | … | ‘9’<br />
         Следуя введенному формальному определению грамматики, представим G[‹Def›] ее составляющими:<br />
         Z = ‹Def›;<br />
-        VT = {a, b, c, ..., z, A, B, C, ..., Z, _, {, }, \n, \t};<br />
-        VN = {‹Def›, ‹TypeRem›, ‹Id›, ‹IdRem›, ‹Struct› , ‹StructRem›, ‹BlockStart› , ‹NewLine› , ‹FieldLine› , ‹FieldId› , ‹FieldIdRem› , ‹FieldType› , ‹FieldTypeRem› , ‹EndBlock›}.
+        VT = {a, b, c, ..., z, A, B, C, ..., Z, _, {, }, \n, \t, type, struct, int, float, string};<br />
+        VN = {‹Def›, ‹Id›, ‹IdRem›, ‹Struct› , ‹StructRem›, ‹BlockStart› , ‹NewLine› , ‹FieldLine› , ‹FieldId› , ‹FieldIdRem› , ‹FieldType›, ‹PossibleEnd›, ‹EndBlock›}.
     </p>
 </body>
 </html>

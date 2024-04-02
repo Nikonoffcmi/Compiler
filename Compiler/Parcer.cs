@@ -41,6 +41,15 @@ namespace Compiler
 
         private List<ParseError> errors;
 
+        private Dictionary<string, string> Words = new Dictionary<string, string>()
+        {
+            { "type", "1" },
+            { "struct", "2" },
+            { "int", "4" },
+            { "float", "5" },
+            { "string", "6" }
+        };
+
         public List<ParseError> GetErrors()
         {
             return errors;
@@ -55,7 +64,7 @@ namespace Compiler
             if (lexemes.Count < 1)
             {
                 id++;
-                var error = new ParseError(id, "Ожидался буквенный символ", "", 1, 1, 1);
+                var error = new ParseError(id, "Объявите структуру", "", 1, 1, 1);
                 errors.Add(error);
                 incorrStr = "";
                 return false;
@@ -69,60 +78,60 @@ namespace Compiler
                 switch (state)
                 {
                     case 1:
-                        state1();
+                        StateKeyWord("type", 2, "Ожидалось ключевое слово type.");
                         break;
 
                     case 2:
-                        state2();
+                        StateSpace(" ", 3, "Ожидался пробел.");
                         break;
 
                     case 3:
-                        state3();
+                        StateKeyWord("Идентификатор", 4, "Ожидался идентификатор.");
                         break;
 
                     case 4:
-                        state4();
+                        StateSpace(" ", 5, "Ожидался пробел.");
                         break;
 
                     case 5:
-                        state5();
+                        StateKeyWord("struct", 6, "Ожидалось ключевое слово struct.");
                         break;
 
                     case 6:
-                        state6();
+                        StateSpace("{", 7, "Ожидался символ '{'.");
                         break;
 
                     case 7:
-                        state7();
+                        StateSpace("<новая строка>", 8, "Ожидался символ <новая строка>.");
                         break;
 
                     case 8:
-                        state8();
+                        StateSpace("<табуляция>", 9, "Ожидался символ <табуляция>.");
                         break;
 
                     case 9:
-                        state9();
+                        StateKeyWord("Идентификатор", 10, "Ожидался идентификатор.");
                         break;
 
                     case 10:
-                        state10();
+                        StateSpace(" ", 11, "Ожидался пробел.");
                         break;
 
                     case 11:
-                        state11();
+                        StateKeyWordDif(["int", "string", "float"], 12, "Ожидалось одно из ключевых слов: int, float, string.");
                         break;
 
                     case 12:
-                        state12();
+                        StateSpace("<новая строка>", 13, "Ожидался символ <новая строка>.");
                         break;
+
                     case 13:
-                        state13();
-                        break;
-                    case 14:
-                        state14();
+                        StateKeyWordDifEnd(["}", "<табуляция>"], [14, 9], "Ожидалось один символов: '}', <табуляция>");
                         break;
 
-
+                    default:
+                        state = 15;
+                        break;
                 }
             }
 
@@ -135,880 +144,263 @@ namespace Compiler
             var error1 = new ParseError(id, msg, str, line, start, end);
             errors.Add(error1);
         }
-        private bool NextOrEnd() 
+        private bool IsEnd() 
         {
-            if (!NextLex())
-            {
-                state = 15;
-                return false;
-            }
-            else
-            { return true; }
+            var index = lexemes.IndexOf(lex);
+            if (index + 1 == lexemes.Count)
+                return true;
+            else return false;
         }
-
-        private void state1()
+        private void StateKeyWord(string value, int nextState, string msg)
         {
-            if (lex.val == "<новая строка>" || lex.val == " ")
+            string incorr = "";
+            int linenew = lex.line;
+            int st = lex.start;
+            int endnew = lex.end;
+            int index = -1;
+
+            if (value.Equals("Идентификатор"))
             {
-                if (!NextOrEnd())
+                if (IsWord(lex.val) && !Words.Keys.Contains(lex.val))
                 {
-                    if (incorrStr != "")
+                    while (!Words.Keys.Contains(lexemes[lexemes.IndexOf(lex) + 1].val) && !lexemes[lexemes.IndexOf(lex) + 1].val.Equals(" ") && (IsWord(lexemes[lexemes.IndexOf(lex) + 1].val) || char.IsDigit(lexemes[lexemes.IndexOf(lex) + 1].val[0])))
                     {
-                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, incorrStr.Length);
-                        incorrStr = "";
+                        NextLex();
                     }
-
-                    handleError("Ожидался буквенный символ", "", lex.line, lex.start, lex.end);
-                    incorrStr = "";
-                }
-            }
-            else if (char.IsLetter(lex.val[0]))
-            {
-                if (incorrStr != "")
-                {
-                    handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, incorrStr.Length);
-                    incorrStr = "";
-                }
-
-                state = 2;
-                corrStr += lex.val;
-            }
-            else
-            {
-                if (incorrStr == "")
-                {
-                    start = lex.start;
-                    line = lex.line;
-                }
-
-                incorrStr += lex.val;
-
-                if (!NextOrEnd())
-                {
-                    if (incorrStr != "")
-                    {
-                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, incorrStr.Length);
-                        incorrStr = "";
-                    }
-
-                    handleError("Ожидался буквенный символ", "", lex.line, lex.start, lex.end);
-                    incorrStr = "";
-                }
-            }
-        }
-
-        private void state2()
-        {
-            if (!IsWord(lex.val))
-            {
-                if (incorrStr == "")
-                {
-                    start = lex.start;
-                    line = lex.line;
-                }
-                incorrStr += lex.val;
-                end = lex.end;
-
-            }
-
-            while (NextOrEnd() & !lex.val.Equals(" "))
-            {
-                if (!IsWord(lex.val))
-                {
-                    if (incorrStr == "")
-                    {
-                        start = lex.start;
-                        line = lex.line;
-                    }
-                    incorrStr += lex.val;
-                    end = lex.end;
-
+                    state = nextState;
                 }
                 else
                 {
-                    if (incorrStr != "")
-                    {
-                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, end);
-                        incorrStr = "";
-                    }
-                    corrStr += lex.val;
+                    incorr += lex.val;
+                    endnew = lex.end;
                 }
-            }
-
-            if (incorrStr != "")
-            {
-                handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, end);
-                incorrStr = "";
-            }
-
-            if (corrStr.Equals("type"))
-            {
-                if (!NextOrEnd() & !lex.val.Equals(" "))
-                {
-                    handleError("Ожидался символ <пробел>", "", lex.line, lex.end, lex.end);
-                }
-                else
-                    state = 3;
-                corrStr = "";
             }
             else
             {
-                handleError("Ожидалось ключевое слово type.", "", lex.line, lex.end, lex.end);
-                if (!NextOrEnd() & !lex.val.Equals(" "))
+                while(!lexemes[lexemes.IndexOf(lex)].val.Equals(" "))
                 {
-                    handleError("Ожидался символ <пробел>", "", lex.line, lex.end, lex.end);
-                }
-                else
-                    state = 3;
-                corrStr = "";
-            }
-        }
-
-        private void state3()
-        {
-            if (lex.val == " ")
-            {
-                if (!NextOrEnd())
-                {
-                    if (incorrStr != "")
+                    index = lex.val.IndexOf(value);
+                    if (nextState == 6 && lexemes[lexemes.IndexOf(lex)].val.Equals("{"))
+                        break;
+                    if (nextState == 2 && lexemes[lexemes.IndexOf(lex)].val.Equals(" "))
+                        break;
+                    if (index != -1)
                     {
-                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length -1);
-                        incorrStr = "";
+                        state = nextState;
+                        break;
                     }
-
-                    handleError("Ожидался буквенный символ", "", lex.line, lex.start, lex.end);
-                    incorrStr = "";
+                    else
+                    {
+                        incorr += lex.val;
+                        endnew = lex.end;
+                        NextLex();
+                    }
                 }
             }
-            else if (char.IsLetter(lex.val[0]))
+
+            if (state != nextState)
             {
-                if (incorrStr != "")
+                handleError(msg, incorr, linenew, st, endnew);
+                if (value.Equals("Идентификатор"))
+                    state = nextState;
+                else if (lex.val.Equals("{") && nextState == 6)
+                    state = nextState;
+                else
                 {
-                    handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
-                    incorrStr = "";
+                    state = nextState;
                 }
-                state = 4;
-                corrStr += lex.val;
             }
             else
             {
-                if (incorrStr == "")
-                {
-                    start = lex.start;
-                    line = lex.line;
-                }
-
-                incorrStr += lex.val;
-
-                if (!NextOrEnd())
-                {
-                    if (incorrStr != "")
-                    {
-                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
-                        incorrStr = "";
-                    }
-
-                    handleError("Ожидался буквенный символ", "", lex.line, lex.start, lex.end);
-                    incorrStr = "";
-                }
+                if (incorr != "")
+                    handleError("Ошибочный фрагмент", incorr, linenew, st, endnew);
+                NextLex();
             }
+
         }
 
-        private void state4()
+        private void StateSpace(string value, int nextState, string msg)
         {
-            if (!IsWord(lex.val))
-            {
-                if (incorrStr == "")
-                {
-                    start = lex.start;
-                    line = lex.line;
-                }
-                incorrStr += lex.val;
-            }
+            string incorr = "";
+            int linenew = lex.line;
+            int st = lex.start;
+            int endnew = lex.end;
+            int index = -1;
 
-            while (NextOrEnd() & !lex.val.Equals(" "))
+            index = lex.val.IndexOf(value);
+            if (lex.val.Equals(value))
             {
-                if (!IsWord(lex.val))
+                state = nextState;
+                while (lex.val.Equals(" "))
                 {
-                    if (incorrStr == "")
+                    if (IsEnd())
                     {
-                        start = lex.start;
-                        line = lex.line;
+                        break;
                     }
-                    incorrStr += lex.val;
+                    if (!lexemes[lexemes.IndexOf(lex) + 1].val.Equals(" "))
+                        break;
+                    NextLex();
+                }
+            }
+            else
+            {
+                while (!lexemes[lexemes.IndexOf(lex)].val.Equals(value))
+                {
+                    if (lexemes[lexemes.IndexOf(lex)].val.Equals("<новая строка>"))
+                        break;
+                    if (lexemes[lexemes.IndexOf(lex)].val.Equals("<табуляция>"))
+                        break;
+                    if (nextState == 9 && IsWord(lexemes[lexemes.IndexOf(lex)].val))
+                        break;
+                    if (value == " " && IsWord(lexemes[lexemes.IndexOf(lex)].val))
+                        break;
+                    if (value.Contains(lex.val))
+                    {
+                        state = nextState;
+                        break;
+                    }
+                    else
+                    {
+                        incorr += lex.val;
+                        endnew = lex.end;
+                        NextLex();
+                    }
+                }
+                if (value.Contains(lex.val))
+                {
+                    state = nextState;
                 }
                 else
                 {
-                    if (incorrStr != "")
-                    {
-                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, lex.end - lex.val.Length);
-                        incorrStr = "";
-                    }
-                    corrStr += lex.val;
+                    incorr += lex.val;
+                    endnew = lex.end;
                 }
             }
 
-            if (incorrStr != "")
+            if (state != nextState)
             {
-                handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, lex.end - lex.val.Length);
-                incorrStr = "";
-            }
-
-            if (corrStr.Equals("type") || corrStr.Equals("struct") || corrStr.Equals("int") || corrStr.Equals("float") || corrStr.Equals("string"))
-            {
-
-                handleError("Имя переменной не может быть ключивым словом", corrStr, lex.line, lex.end, lex.end);
-                corrStr = "";
-
-                if (!NextOrEnd() & !lex.val.Equals(" "))
-                {
-                    handleError("Ожидался символ <пробел>", "", lex.line, lex.end, lex.end);
-                }
-                else
-                    state = 5;
+                handleError(msg, "", linenew, st, endnew);
+                state = nextState;
             }
             else
             {
-                if (!NextOrEnd() & !lex.val.Equals(" "))
-                {
-                    handleError("Ожидался символ <пробел>", "", lex.line, lex.end, lex.end);
-                }
-                else
-                    state = 5;
-                corrStr = "";
+                if (incorr != "")
+                    handleError("Ошибочный фрагмент", incorr, linenew, st, endnew);
+                NextLex();
             }
+
         }
 
-        private void state5()
+        private void StateKeyWordDif(string[] value, int nextState, string msg)
         {
-            if (lex.val == " ")
-            {
-                if (!NextOrEnd())
-                {
-                    if (incorrStr != "")
-                    {
-                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
-                        incorrStr = "";
-                    }
+            string incorr = "";
+            int linenew = lex.line;
+            int st = lex.start;
+            int endnew = lex.end;
+            int index = -1;
 
-                    handleError("Ожидался буквенный символ", "", lex.line, lex.start, lex.end);
-                    incorrStr = "";
-                }
-            }
-            else if (char.IsLetter(lex.val[0]))
+            if (value.Contains(lex.val))
             {
-                if (incorrStr != "")
-                {
-                    handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
-                    incorrStr = "";
-                }
-                state = 6;
-                corrStr += lex.val;
+                state = nextState;
             }
             else
             {
-                if (incorrStr == "")
+                while (!lexemes[lexemes.IndexOf(lex)].val.Equals("<новая строка>"))
                 {
-                    start = lex.start;
-                    line = lex.line;
-                }
-
-                incorrStr += lex.val;
-                if (!NextOrEnd())
-                {
-                    if (incorrStr != "")
+                    if (value.Contains(lex.val))
                     {
-                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
-                        incorrStr = "";
+                        state = nextState;
+                        break;
                     }
-
-                    handleError("Ожидался буквенный символ", "", lex.line, lex.start, lex.end);
-                    incorrStr = "";
+                    else
+                    {
+                        incorr += lex.val;
+                        endnew = lex.end;
+                        NextLex();
+                    }
                 }
             }
+
+            if (state != nextState)
+            {
+                handleError(msg, incorr, linenew, st, endnew);
+                if (value.Equals("Идентификатор"))
+                    state = nextState;
+                else if (lex.val.Equals("{") && nextState == 6)
+                    state = nextState;
+                else if (lex.val.Equals("<новая строка>"))
+                    state = nextState;
+                else
+                {
+                    state = nextState;
+                    NextLex();
+                }
+            }
+            else
+            {
+                if (incorr != "")
+                    handleError("Ошибочный фрагмент", incorr, linenew, st, endnew);
+                NextLex();
+            }
+
         }
 
-        private void state6()
+        private void StateKeyWordDifEnd(string[] value, int[] nextState, string msg)
         {
-            if (!IsWord(lex.val))
+            string incorr = "";
+            int linenew = lex.line;
+            int st = lex.start;
+            int endnew = lex.end;
+            int index = -1;
+
+            if (value.Contains(lex.val))
             {
-                if (incorrStr == "")
-                {
-                    start = lex.start;
-                    line = lex.line;
-                }
-                incorrStr += lex.val;
+                if (lex.val.Equals(value[0]))
+                    state = nextState[0];
+                else if (lex.val.Equals(value[1]))
+                    state = nextState[1];
+            }
+            else
+            {
+                incorr += lex.val;
+                endnew = lex.end;
             }
 
-            while (NextOrEnd() & !lex.val.Equals(" ") & !lex.val.Equals("{"))
+            if (!nextState.Contains(state))
             {
-                if (!IsWord(lex.val))
+                if (IsWord(lex.val))
                 {
-                    if (incorrStr == "")
+                    if (IsEnd())
                     {
-                        start = lex.start;
-                        line = lex.line;
+                        handleError("Ожидался символ '}'.", "", linenew, st, endnew);
+                        state = 15;
                     }
-                    incorrStr += lex.val;
+                    else
+                    {
+                        handleError("Ожидался символ <табуляция>.", "", linenew, st, endnew);
+                        state = nextState[1];
+                    }
                 }
                 else
                 {
-                    if (incorrStr != "")
+                    handleError(msg, "", linenew, st, endnew);
+                    NextLex();
+                    if (IsEnd())
                     {
-                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, lex.end - lex.val.Length);
-                        incorrStr = "";
-                    }
-                    corrStr += lex.val;
-                }
-            }
-
-            if (incorrStr != "")
-            {
-                handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, lex.end - lex.val.Length);
-                incorrStr = "";
-            }
-
-            if (corrStr.Equals("struct"))
-            {
-                if (!lex.val.Equals(" ") & !lex.val.Equals("{"))
-                {
-                    handleError("Ожидался символ <пробел> либо '{'", "", lex.line, lex.end, lex.end);
-                }
-                else if (lex.val.Equals(" "))
-                    state = 7;
-                else if (lex.val.Equals("{"))
-                {
-                    state = 8;
-                    if (!NextOrEnd())
-                    {
-                        handleError("Ожидался символ <новая строка>", "", lex.line, lex.start, lex.end);
-                        incorrStr = "";
+                        state = 15;
                     }
                 }
-                corrStr = "";
             }
             else
             {
-                handleError("Ожидалось ключевое слово struct.", "", lex.line, lex.end, lex.end);
-
-                if (!lex.val.Equals(" ") & !lex.val.Equals("{"))
-                {
-                    handleError("Ожидался символ <пробел> либо '{'", "", lex.line, lex.end, lex.end);
-                }
-                else if (lex.val.Equals(" "))
-                    state = 7;
-                else if (lex.val.Equals("{"))
-                {
-                    state = 8;
-
-                    if (!NextOrEnd())
-                    {
-                        handleError("Ожидался символ <новая строка>", "", lex.line, lex.start, lex.end);
-                        incorrStr = "";
-                    }
-                }
-                corrStr = "";
+                if (incorr != "")
+                    handleError("Ошибочный фрагмент", incorr, linenew, st, endnew);
+                NextLex();
             }
+
         }
 
-        private void state7()
-        {
-            if (lex.val == " ")
-            {
-                if (!NextOrEnd())
-                {
-                    if (incorrStr != "")
-                    {
-                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
-                        incorrStr = "";
-                    }
 
-                    handleError("Ожидался символ '{'", "", lex.line, lex.start, lex.end);
-                    incorrStr = "";
-                }
-            }
-            else if (lex.val == "{")
-            {
-                if (incorrStr != "")
-                {
-                    handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
-                    incorrStr = "";
-                }
-                state = 8;
-                if (!NextOrEnd())
-                {
-                    handleError("Ожидался символ <новая строка>", "", lex.line, lex.start, lex.end);
-                    incorrStr = "";
-                }
-                corrStr += lex.val;
-            }
-            else
-            {
-                if (incorrStr == "")
-                {
-                    start = lex.start;
-                    line = lex.line;
-                }
-
-                incorrStr += lex.val;
-                if (!NextOrEnd())
-                {
-                    if (incorrStr != "")
-                    {
-                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
-                        incorrStr = "";
-                    }
-
-                    handleError("Ожидался символ '{'", "", lex.line, lex.start, lex.end);
-                    incorrStr = "";
-                }
-            }
-        }
-
-        private void state8()
-        {
-            if (lex.val == " ")
-            {
-                if (!NextOrEnd())
-                {
-                    if (incorrStr != "")
-                    {
-                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
-                        incorrStr = "";
-                    }
-
-                    handleError("Ожидался символ <новая строка>", "", lex.line, lex.start, lex.end);
-                    incorrStr = "";
-                }
-            }
-            else if (lex.val == "<новая строка>")
-            {
-                if (incorrStr != "")
-                {
-                    handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
-                    incorrStr = "";
-                }
-                state = 9;
-                if (!NextOrEnd())
-                {
-                    handleError("Ожидался символ <табуляция>", "", lex.line, lex.start, lex.end);
-                    incorrStr = "";
-                }
-                corrStr += lex.val;
-            }
-            else
-            {
-                if (incorrStr == "")
-                {
-                    start = lex.start;
-                    line = lex.line;
-                }
-
-                incorrStr += lex.val;
-
-                if (!NextOrEnd())
-                {
-                    if (incorrStr != "")
-                    {
-                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
-                        incorrStr = "";
-                    }
-
-                    handleError("Ожидался символ <новая строка>", "", lex.line, lex.start, lex.end);
-                    incorrStr = "";
-                }
-            }
-        }
-
-        private void state9()
-        {
-            if (lex.val == " ")
-            {
-                if (!NextOrEnd())
-                {
-                    if (incorrStr != "")
-                    {
-                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
-                        incorrStr = "";
-                    }
-
-                    handleError("Ожидался символ <табуляция>", "", lex.line, lex.start, lex.end);
-                    incorrStr = "";
-                }
-            }
-            else if (lex.val == "<табуляция>")
-            {
-                if (incorrStr != "")
-                {
-                    handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
-                    incorrStr = "";
-                }
-                state = 10; 
-                if (!NextOrEnd())
-                {
-                    if (incorrStr != "")
-                    {
-                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
-                        incorrStr = "";
-                    }
-
-                    handleError("Ожидался буквенный символ", "", lex.line, lex.start, lex.end);
-                    incorrStr = "";
-                }
-                corrStr += lex.val;
-            }
-            else
-            {
-                if (incorrStr == "")
-                {
-                    start = lex.start;
-                    line = lex.line;
-                }
-
-                incorrStr += lex.val;
-
-                if (!NextOrEnd())
-                {
-                    if (incorrStr != "")
-                    {
-                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
-                        incorrStr = "";
-                    }
-
-                    handleError("Ожидался символ <табуляция>", "", lex.line, lex.start, lex.end);
-                    incorrStr = "";
-                }
-            }
-        }
-
-        private void state10()
-        {
-            if (lex.val == " ")
-            {
-                if (!NextOrEnd())
-                {
-                    if (incorrStr != "")
-                    {
-                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
-                        incorrStr = "";
-                    }
-
-                    handleError("Ожидался буквенный символ", "", lex.line, lex.start, lex.end);
-                    incorrStr = "";
-                }
-            }
-            else if (char.IsLetter(lex.val[0]))
-            {
-                if (incorrStr != "")
-                {
-                    handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
-                    incorrStr = "";
-                }
-                state = 11;
-                corrStr = "";
-                corrStr += lex.val;
-            }
-            else
-            {
-                if (incorrStr == "")
-                {
-                    start = lex.start;
-                    line = lex.line;
-                }
-
-                incorrStr += lex.val;
-
-                if (!NextOrEnd())
-                {
-                    if (incorrStr != "")
-                    {
-                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
-                        incorrStr = "";
-                    }
-
-                    handleError("Ожидался буквенный символ", "", lex.line, lex.start, lex.end);
-                    incorrStr = "";
-                }
-            }
-        }
-
-        private void state11()
-        {
-            if (!IsWord(lex.val))
-            {
-                if (incorrStr == "")
-                {
-                    start = lex.start;
-                    line = lex.line;
-                }
-                incorrStr += lex.val;
-            }
-
-            while (NextOrEnd() & !lex.val.Equals(" "))
-            {
-                if (!IsWord(lex.val))
-                {
-                    if (incorrStr == "")
-                    {
-                        start = lex.start;
-                        line = lex.line;
-                    }
-                    incorrStr += lex.val;
-                }
-                else
-                {
-                    if (incorrStr != "")
-                    {
-                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, lex.end - lex.val.Length);
-                        incorrStr = "";
-                    }
-                    corrStr += lex.val;
-                }
-            }
-
-            if (incorrStr != "")
-            {
-                handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, lex.end - lex.val.Length);
-                incorrStr = "";
-            }
-
-            if (corrStr.Equals("type") || corrStr.Equals("struct") || corrStr.Equals("int") || corrStr.Equals("float") || corrStr.Equals("string"))
-            {
-
-                handleError("Имя переменной не может быть ключивым словом", corrStr, lex.line, lex.end, lex.end);
-                corrStr = "";
-
-                if (!NextOrEnd() & !lex.val.Equals(" "))
-                {
-                    handleError("Ожидался символ <пробел>", "", lex.line, lex.end, lex.end);
-                }
-                else
-                    state = 12;
-            }
-            else
-            {
-                if (!NextOrEnd() & !lex.val.Equals(" "))
-                {
-                    handleError("Ожидался символ <пробел>", "", lex.line, lex.end, lex.end);
-                }
-                else
-                    state = 12;
-                corrStr = "";
-            }
-        }
-
-        private void state12()
-        {
-            if (lex.val == " ")
-            {
-                if (!NextOrEnd())
-                {
-                    if (incorrStr != "")
-                    {
-                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
-                        incorrStr = "";
-                    }
-
-                    handleError("Ожидался буквенный символ", "", lex.line, lex.start, lex.end);
-                    incorrStr = "";
-                }
-            }
-            else if (char.IsLetter(lex.val[0]))
-            {
-                if (incorrStr != "")
-                {
-                    handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
-                    incorrStr = "";
-                }
-                state = 13;
-                corrStr += lex.val;
-            }
-            else
-            {
-                if (incorrStr == "")
-                {
-                    start = lex.start;
-                    line = lex.line;
-                }
-
-                incorrStr += lex.val;
-                if (!NextOrEnd())
-                {
-                    if (incorrStr != "")
-                    {
-                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
-                        incorrStr = "";
-                    }
-
-                    handleError("Ожидался буквенный символ", "", lex.line, lex.start, lex.end);
-                    incorrStr = "";
-                }
-            }
-        }
-
-        private void state13()
-        {
-            if (!IsWord(lex.val))
-            {
-                if (incorrStr == "")
-                {
-                    start = lex.start;
-                    line = lex.line;
-                }
-                incorrStr += lex.val;
-            }
-
-            while (NextOrEnd() & !lex.val.Equals("<новая строка>"))
-            {
-                if (!IsWord(lex.val))
-                {
-                    if (incorrStr == "")
-                    {
-                        start = lex.start;
-                        line = lex.line;
-                    }
-                    incorrStr += lex.val;
-                }
-                else
-                {
-                    if (incorrStr != "")
-                    {
-                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, lex.end - lex.val.Length);
-                        incorrStr = "";
-                    }
-                    corrStr += lex.val;
-                }
-            }
-
-            if (incorrStr != "")
-            {
-                handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, lex.end - lex.val.Length);
-                incorrStr = "";
-            }
-
-            if (corrStr.Equals("int") || corrStr.Equals("float") || corrStr.Equals("string"))
-            {
-                if (!lex.val.Equals("<новая строка>"))
-                {
-                    handleError("Ожидался символ <новая строка>", "", lex.line, lex.end, lex.end);
-                }
-                else 
-                    state = 14;
-                
-                corrStr = "";
-            }
-            else
-            {
-                handleError("Ожидалось одно из ключевых слов: int, float, string.", "", lex.line, lex.end, lex.end);
-
-                if (!lex.val.Equals("<новая строка>"))
-                {
-                    handleError("Ожидался символ <новая строка>", "", lex.line, lex.end, lex.end);
-                }
-                else
-                    state = 14;
-
-                corrStr = "";
-            }
-        }
-
-        private void state14()
-        {
-            if (lex.val == " ")
-            {
-                if (!NextOrEnd())
-                {
-                    if (incorrStr != "")
-                    {
-                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
-                        incorrStr = "";
-                    }
-
-                    handleError("Ожидался символ <табуляция> либо '}'", "", lex.line, lex.start, lex.end);
-                    incorrStr = "";
-                }
-            }
-            else if (lex.val == "<новая строка>")
-            {
-                if (!NextOrEnd())
-                {
-                    if (incorrStr != "")
-                    {
-                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
-                        incorrStr = "";
-                    }
-
-                    handleError("Ожидался символ <табуляция> либо '}'", "", lex.line, lex.start, lex.end);
-                    incorrStr = "";
-                }
-            }
-            else if (lex.val == "<табуляция>")
-            {
-                if (incorrStr != "")
-                {
-                    handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
-                    incorrStr = "";
-                }
-                state = 10; 
-                if (!NextOrEnd())
-                {
-                    if (incorrStr != "")
-                    {
-                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
-                        incorrStr = "";
-                    }
-
-                    handleError("Ожидался буквенный символ", "", lex.line, lex.start, lex.end);
-                    incorrStr = "";
-                }
-                corrStr += lex.val;
-            }
-            else if (lex.val == "}")
-            {
-                if (incorrStr != "")
-                {
-                    handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
-                    incorrStr = "";
-                }
-
-                if (NextOrEnd())
-                {
-                    while ((lex.val == " " | lex.val == "<новая строка>"))
-                    {
-                        if (state == 15)
-                            break;
-                        NextOrEnd();
-                    }
-                    if (lex.val != " " && lex.val != "<новая строка>")
-                        state = 1;
-                }
-                else
-                    state = 15;
-                corrStr += lex.val;
-            }
-            else
-            {
-                if (incorrStr == "")
-                {
-                    start = lex.start;
-                    line = lex.line;
-                }
-
-                incorrStr += lex.val;
-
-                if (!NextOrEnd())
-                {
-                    if (incorrStr != "")
-                    {
-                        handleError("Неожиданный символ. Ошибочный фрагмент", incorrStr, line, start, start + incorrStr.Length - 1);
-                        incorrStr = "";
-                    }
-
-                    handleError("Ожидался символ <табуляция> либо '}'", "", lex.line, lex.start, lex.end);
-                    incorrStr = "";
-                }
-            }
-        }
 
         private bool NextLex()
         {
@@ -1023,13 +415,19 @@ namespace Compiler
         {
             foreach (var c in str)
             {
-                if (!Char.IsLetter(c))
+                if (!isLetter(c))
                 {
                     return false;
                 }
             }
             return true;
         }
+
+        private bool isLetter(char c)
+        {
+            return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+        }
+
     }
 
 }

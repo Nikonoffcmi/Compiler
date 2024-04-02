@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -62,7 +63,24 @@ namespace Compiler
                     {
                         if (buf == "")
                             start = i + 1;
-                        buf += c;                        
+                        buf += c;   
+                        for (int j = 0; j < 5; j++)
+                        {
+                            if (buf.IndexOf(Words.Keys.ToList()[j]) != -1)
+                            {
+                                end = i;
+                                if (buf.IndexOf(Words.Keys.ToList()[j]) != 0)
+                                {
+                                    string s = buf.Substring(0, buf.IndexOf(Words.Keys.ToList()[j]));
+                                    Result(s, lineCount, start, start + buf.IndexOf(Words.Keys.ToList()[j]));
+                                }
+                                string st = buf.Substring(buf.IndexOf(Words.Keys.ToList()[j]));
+
+                                Result(st, lineCount, start + buf.IndexOf(Words.Keys.ToList()[j]), end + 1);
+                                buf = "";
+                            }
+                        }
+                        
                     }
                     else if (Separators.Keys.Contains(c))
                     {
