@@ -567,6 +567,9 @@ namespace Compiler
                     offsend += te.Document.GetLineByNumber(i).TotalLength;
                 }
                 te.Focus();
+                int j = 1;
+                while (offsend - offs < 0 && j <= pe.line)
+                    offsend += te.Document.GetLineByNumber(j++).TotalLength;
 
                 te.SelectionStart = offs - 1;
                 te.SelectionLength = offsend - offs;
@@ -588,6 +591,10 @@ namespace Compiler
                     offsend += te.Document.GetLineByNumber(i).TotalLength;
                 }
                 te.Focus();
+
+                int j = 1;
+                while (offsend - offs < 0 && j <= pe.line)
+                    offsend += te.Document.GetLineByNumber(j++).TotalLength;
 
                 te.SelectionStart = offs - 1;
                 te.SelectionLength = offsend - offs;

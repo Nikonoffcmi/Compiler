@@ -246,9 +246,9 @@ namespace Compiler
             {
                 while (!lexemes[lexemes.IndexOf(lex)].val.Equals(value))
                 {
-                    if (lexemes[lexemes.IndexOf(lex)].val.Equals("<новая строка>"))
+                    if (nextState == 7 && lexemes[lexemes.IndexOf(lex)].val.Equals("<новая строка>"))
                         break;
-                    if (lexemes[lexemes.IndexOf(lex)].val.Equals("<табуляция>"))
+                    if (nextState == 8 && lexemes[lexemes.IndexOf(lex)].val.Equals("<табуляция>"))
                         break;
                     if (nextState == 9 && IsWord(lexemes[lexemes.IndexOf(lex)].val))
                         break;
@@ -266,6 +266,8 @@ namespace Compiler
                         incorr += lex.val;
                         endnew = lex.end;
                         NextLex();
+                        if (IsEnd())
+                            break;
                     }
                 }
                 if (value.Contains(lex.val))
@@ -319,6 +321,8 @@ namespace Compiler
                         incorr += lex.val;
                         endnew = lex.end;
                         NextLex();
+                        if (IsEnd())
+                            break;
                     }
                 }
             }
