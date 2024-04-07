@@ -106,7 +106,7 @@ namespace Compiler
                         break;
 
                     case 8:
-                        StateSpace("<табуляция>", 9, "Ожидался символ <табуляция>.");
+                        StateKeyWordDifEnd(["bgnhfjutydrsesfdgbnhfjmkuiluytdrsfg34256yt", " "], [9, 9], "Ожидался идентификатор.");
                         break;
 
                     case 9:
@@ -126,7 +126,7 @@ namespace Compiler
                         break;
 
                     case 13:
-                        StateKeyWordDifEnd(["}", "<табуляция>"], [14, 9], "Ожидалось один символов: '}', <табуляция>");
+                        StateKeyWordDifEnd(["}", " "], [14, 9], "Ожидался символ '}'.");
                         break;
 
                     default:
@@ -248,7 +248,7 @@ namespace Compiler
                 {
                     if (nextState == 7 && lexemes[lexemes.IndexOf(lex)].val.Equals("<новая строка>"))
                         break;
-                    if (nextState == 8 && lexemes[lexemes.IndexOf(lex)].val.Equals("<табуляция>"))
+                    if (nextState == 8 && lexemes[lexemes.IndexOf(lex)].val.Equals(" "))
                         break;
                     if (nextState == 9 && IsWord(lexemes[lexemes.IndexOf(lex)].val))
                         break;
@@ -256,7 +256,7 @@ namespace Compiler
                         break;
                     if (value == " " && IsWord(lexemes[lexemes.IndexOf(lex)].val))
                         break;
-                    if (value.Contains(lex.val))
+                    if (value.Contains(lex.val) && !lex.val.Equals(" "))
                     {
                         state = nextState;
                         break;
@@ -363,8 +363,20 @@ namespace Compiler
             {
                 if (lex.val.Equals(value[0]))
                     state = nextState[0];
-                else if (lex.val.Equals(value[1]))
+                else if (lex.val.Equals(value[1])) 
+                { 
                     state = nextState[1];
+                    while (lex.val.Equals(" "))
+                    {
+                        if (IsEnd())
+                        {
+                            break;
+                        }
+                        if (!lexemes[lexemes.IndexOf(lex) + 1].val.Equals(" "))
+                            break;
+                        NextLex();
+                    }
+                }
             }
             else
             {
@@ -383,7 +395,6 @@ namespace Compiler
                     }
                     else
                     {
-                        handleError("Ожидался символ <табуляция>.", "", linenew, st, endnew);
                         state = nextState[1];
                     }
                 }

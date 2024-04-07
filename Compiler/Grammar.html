@@ -20,12 +20,11 @@
         5. ‹StructRem› → ‘struct’‹BlockStart›<br />
         6. ‹BlockStart› → ‘{‘‹NewLine›<br />
         7. ‹NewLine› →’ \n’‹FieldLine›<br />
-        8. ‹FieldLine› → ‘\t’‹FieldId›<br />
-        9. ‹FieldId› → Б {Б | Ц} ‹FieldIdRem›<br />
-        10. ‹FieldIdRem› → _‹FieldType›<br />
-        11. ‹FieldType› →  (‘int’ | ‘string’ | ‘float’) ‹PossibleEnd›<br />
-        12. ‹PossibleEnd› →  \n‹EndBlock›<br />
-        13. ‹EndBlock› → ’\t’‹FieldId› | ‘}’<br />
+        8. ‹FieldLine› → Б {Б | Ц} ‹FieldIdRem›<br />
+        9. ‹FieldIdRem› → _‹FieldType›<br />
+        10. ‹FieldType› →  (‘int’ | ‘string’ | ‘float’) ‹PossibleEnd›<br />
+        11. ‹PossibleEnd› →  \n‹EndBlock›<br />
+        12. ‹EndBlock› → Б {Б | Ц} ‹FieldIdRem› | ‘}’<br />
     </p>
     <p>
         Б → ‘a’ | ‘b’ | … | ‘z’ | ‘A’ | ‘B’ | … | ‘Z’<br />
@@ -33,7 +32,7 @@
         Следуя введенному формальному определению грамматики, представим G[‹Def›] ее составляющими:<br />
         Z = ‹Def›;<br />
         VT = {a, b, c, ..., z, A, B, C, ..., Z, _, {, }, \n, \t, type, struct, int, float, string};<br />
-        VN = {‹Def›, ‹Id›, ‹IdRem›, ‹Struct› , ‹StructRem›, ‹BlockStart› , ‹NewLine› , ‹FieldLine› , ‹FieldId› , ‹FieldIdRem› , ‹FieldType›, ‹PossibleEnd›, ‹EndBlock›}.
+        VN = {‹Def›, ‹Id›, ‹IdRem›, ‹Struct› , ‹StructRem›, ‹BlockStart› , ‹NewLine› , ‹FieldLine› , ‹FieldIdRem› , ‹FieldType›, ‹PossibleEnd›, ‹EndBlock›}.
     </p>
 </body>
 </html>

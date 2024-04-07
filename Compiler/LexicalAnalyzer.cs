@@ -153,7 +153,7 @@ namespace Compiler
                         break;
                     case "11":
                         lex = "Табуляция";
-                        val = "<табуляция>";
+                        val = " ";
                         break;
                     default:
                         break;
