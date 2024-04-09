@@ -250,6 +250,8 @@ namespace Compiler
                         break;
                     if (nextState == 8 && lexemes[lexemes.IndexOf(lex)].val.Equals(" "))
                         break;
+                    if (nextState == 13 && lexemes[lexemes.IndexOf(lex)].val.Equals(" "))
+                        break;
                     if (nextState == 9 && IsWord(lexemes[lexemes.IndexOf(lex)].val))
                         break;
                     if (nextState == 13 && lex.val.Equals("}"))
@@ -270,7 +272,7 @@ namespace Compiler
                             break;
                     }
                 }
-                if (value.Contains(lex.val))
+                if (value.Equals(lex.val))
                 {
                     state = nextState;
                 }
