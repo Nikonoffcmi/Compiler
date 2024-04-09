@@ -28,23 +28,14 @@ namespace Compiler
         }
     }
     internal class LexicalAnalyzer
-    {
-        private Dictionary<string, string> Words = new Dictionary<string, string>()
-        {
-            { "type", "1" },
-            { "struct", "2" },
-            { "int", "4" },
-            { "float", "5" },
-            { "string", "6" }
-        }; 
+    { 
         private Dictionary<char, string> Separators = new Dictionary<char, string>()
         {
-            { ' ', "7" },
-            { '\n', "8" },
-            { '\r', "8" },
-            { '{', "9" },
-            { '}', "10" },
-            { '\t', "11" }
+            { '+', "1" },
+            { '-', "2" },
+            { '=', "3" },
+            { '*', "4" },
+            { '/', "5" },
         };
         public List<Lex> Lexemes = new List<Lex>();
         private string buf = ""; 
@@ -63,24 +54,7 @@ namespace Compiler
                     {
                         if (buf == "")
                             start = i + 1;
-                        buf += c;   
-                        for (int j = 0; j < 5; j++)
-                        {
-                            if (buf.IndexOf(Words.Keys.ToList()[j]) != -1)
-                            {
-                                end = i;
-                                if (buf.IndexOf(Words.Keys.ToList()[j]) != 0)
-                                {
-                                    string s = buf.Substring(0, buf.IndexOf(Words.Keys.ToList()[j]));
-                                    Result(s, lineCount, start, start + buf.IndexOf(Words.Keys.ToList()[j]));
-                                }
-                                string st = buf.Substring(buf.IndexOf(Words.Keys.ToList()[j]));
-
-                                Result(st, lineCount, start + buf.IndexOf(Words.Keys.ToList()[j]), end + 1);
-                                buf = "";
-                            }
-                        }
-                        
+                        buf += c;                        
                     }
                     else if (Separators.Keys.Contains(c))
                     {
@@ -121,13 +95,7 @@ namespace Compiler
 
         private void Result(string temp, int line, int start, int end)
         {
-            if (Words.Keys.Contains(temp))
-            {
-                var lex = new Lex(Words[temp], "Ключевое слово", temp, start, end, line);
-                Lexemes.Add(lex);
-                return;
-            }
-            else if (Separators.Keys.Contains(temp[0]))
+            if (Separators.Keys.Contains(temp[0]))
             {
                 string lex = "";
                 string val = "";
@@ -135,25 +103,25 @@ namespace Compiler
                     return;
                 switch (Separators[temp[0]])
                 {
-                    case "7":
-                        lex = "Разделитель";
-                        val = " ";
+                    case "1":
+                        lex = "плюс";
+                        val = "+";
                         break;
-                    case "8":
-                        lex = "Переход на новую строку";
-                        val = "<новая строка>";
+                    case "2":
+                        lex = "минус";
+                        val = "-";
                         break;
-                    case "9":
-                        lex = "Начало блока данных";
-                        val = "{";
+                    case "3":
+                        lex = "равно";
+                        val = "=";
                         break;
-                    case "10":
-                        lex = "Конец блока данных";
-                        val = "}";
+                    case "5":
+                        lex = "деление";
+                        val = "/";
                         break;
-                    case "11":
-                        lex = "Табуляция";
-                        val = "<табуляция>";
+                    case "4":
+                        lex = "умножение";
+                        val = "*";
                         break;
                     default:
                         break;
@@ -164,7 +132,7 @@ namespace Compiler
             }
             else
             {
-                var lex = new Lex("3", "Идентификатор", temp, start, end, line);
+                var lex = new Lex("7", "Идентификатор", temp, start, end, line);
                 Lexemes.Add(lex);
                 return;
             }

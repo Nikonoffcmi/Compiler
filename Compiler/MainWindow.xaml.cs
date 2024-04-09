@@ -537,19 +537,19 @@ namespace Compiler
 
         private void Analyzer(object sender, RoutedEventArgs e)
         {
-            var parcer = new Parser();
-            var tb = tabCont.SelectedItem as TabItem;
-            var te = tb.Content as ICSharpCode.AvalonEdit.TextEditor;
-            parcer.Parse(te.Text);
-
-            dataGridResult.ItemsSource = parcer.GetErrors();
-
-            if (dataGridResult.Items.Count < 1)
+            try
             {
-                MessageBox.Show("Ошибки не обнаружились!", "Успех!", MessageBoxButton.OK);
+                var tb = tabCont.SelectedItem as TabItem;
+                var te = tb.Content as ICSharpCode.AvalonEdit.TextEditor;
+                var pe = dataGridResult.SelectedValue as ParseError;
+                TetradaParser polishNotationCalculator = new(te.Text.Replace("\n", "").Replace("\r", "").Replace(" ", "").Replace("\t", ""));
+                polishNotationCalculator.PrintTetrads();
+                dataGridResult.ItemsSource = polishNotationCalculator.tetradas;
             }
-
-            //te.TextArea.TextView.LineTransformers.Add(new ColorizeAvalonEdit());
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка!", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void dataGridResult_SelectionChanged(object sender, SelectionChangedEventArgs e)
