@@ -36,6 +36,8 @@ namespace Compiler
             { '=', "3" },
             { '*', "4" },
             { '/', "5" },
+            { '(', "6" },
+            { ')', "7" },
         };
         public List<Lex> Lexemes = new List<Lex>();
         private string buf = ""; 
@@ -122,6 +124,14 @@ namespace Compiler
                     case "4":
                         lex = "умножение";
                         val = "*";
+                        break;
+                    case "6":
+                        lex = "открыть";
+                        val = "(";
+                        break;
+                    case "7":
+                        lex = "закрыть";
+                        val = ")";
                         break;
                     default:
                         break;

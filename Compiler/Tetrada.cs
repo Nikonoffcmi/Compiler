@@ -31,12 +31,14 @@ namespace Compiler
         private Lex lex;
 
         private Dictionary<char, int> opPriority = new() {
-            {'=', 0},
-            {'+', 1},
-            {'-', 1},
-            {'*', 2},
-            {'/', 2},
-            {'~', 3},
+
+            {'(', 0},
+            {'=', 1},
+            {'+', 2},
+            {'-', 2},
+            {'*', 3},
+            {'/', 3},
+            {'~', 4},
         };
 
         public TetradaParser(string expression)
@@ -90,6 +92,8 @@ namespace Compiler
             {
                 if (lex.id.Equals("ERROR")) 
                     throw new Exception(lex.lex + " '" + lex.val + "'");
+                else if (lex.val.Equals("("))
+                    throw new Exception("Неожиданый символ '('");
                 return;
             }
         }
@@ -122,6 +126,8 @@ namespace Compiler
             {
                 if (lex.id.Equals("ERROR"))
                     throw new Exception(lex.lex + " '" + lex.val+"'");
+                else if (lex.val.Equals("("))
+                    throw new Exception("Неожиданый символ '('");
                 return;
             }
         }
@@ -132,13 +138,20 @@ namespace Compiler
             {
                 NextLex();
             }
-            else if (opPriority.Keys.Contains(lex.val[0]))
+            else if (opPriority.Keys.Contains(lex.val[0]) && !lex.val.Equals("("))
                 throw new Exception("Лишний символ '" + lex.val + "'");
             else if (lex.id.Equals("ERROR"))
                 throw new Exception(lex.lex + " '" + lex.val + "'");
-            else
+            else if (lex.val.Equals("("))
             {
+                NextLex();
+                if (lex.val.Equals("-"))
+                    NextLex();
                 Efunc();
+                if (!lex.val.Equals(")"))
+                    throw new Exception("Ожидался символ ')'");
+
+                NextLex();
             }
         }
 
@@ -175,6 +188,18 @@ namespace Compiler
                 if (lexi.lex == "Идентификатор")
                 {
                     postfixExpr += lexi.val + " ";
+                }
+                else if (lexi.val == "(")
+                {
+                    stack.Push(lexi.val[0]);
+                }
+                else if (lexi.val == ")")
+                {
+                    while (stack.Count > 0 && stack.Peek() != '(')
+                        postfixExpr += stack.Pop() + " ";
+                    if (stack.Count == 0)
+                        throw new Exception("Ожидался символ '('");
+                    stack.Pop();
                 }
                 else if (opPriority.ContainsKey(lexi.val[0]))
                 {
