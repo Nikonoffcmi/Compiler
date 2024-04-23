@@ -25,6 +25,7 @@ using ICSharpCode.AvalonEdit.Rendering;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 using MaterialDesignThemes.Wpf;
 using System.Windows.Threading;
+using System.Text.RegularExpressions;
 
 namespace Compiler
 {
@@ -70,7 +71,6 @@ namespace Compiler
                     ShowLineNumbers = true,
                     LineNumbersForeground = Brushes.Black,
                     FontFamily = new System.Windows.Media.FontFamily("Consolas"),
-                    SyntaxHighlighting = ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinition("C#"),
                     FontSize = inputFonsize
                 };
 
@@ -168,8 +168,7 @@ namespace Compiler
                     ShowLineNumbers = true,
                     LineNumbersForeground = Brushes.Black,
                     FontFamily = new System.Windows.Media.FontFamily("Consolas"),
-                    SyntaxHighlighting = ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinition("C#"),
-                FontSize = inputFonsize,
+                    FontSize = inputFonsize,
                     Text = text
                 };
 
@@ -419,7 +418,6 @@ namespace Compiler
                     ShowLineNumbers = true,
                     LineNumbersForeground = Brushes.Black,
                     FontFamily = new System.Windows.Media.FontFamily("Consolas"),
-                    SyntaxHighlighting = ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinition("C#"),
                     FontSize = inputFonsize,
                     Text = text
                 };
@@ -535,43 +533,72 @@ namespace Compiler
             p.Close();
         }
 
+
         private void Analyzer(object sender, RoutedEventArgs e)
         {
-            var parcer = new Parser();
             var tb = tabCont.SelectedItem as TabItem;
             var te = tb.Content as ICSharpCode.AvalonEdit.TextEditor;
-            parcer.Parse(te.Text);
-
-            dataGridResult.ItemsSource = parcer.GetErrors();
-
-            if (dataGridResult.Items.Count < 1)
+            string s = te.Text;
+            var rg = new RegexTask();
+            rg.task(s, 1);
+            if (rg.regexList.Count > 0)
             {
-                MessageBox.Show("Ошибки не обнаружились!", "Успех!", MessageBoxButton.OK);
+                dataGridResult.ItemsSource = rg.regexList;
             }
+            else
+            {
+                dataGridResult.ItemsSource = null;
+                MessageBox.Show("Совпадений не найдено", "Ошибка", MessageBoxButton.OK);
+            }
+        }
 
-            //te.TextArea.TextView.LineTransformers.Add(new ColorizeAvalonEdit());
+        private void Analyzer2(object sender, RoutedEventArgs e)
+        {
+            var tb = tabCont.SelectedItem as TabItem;
+            var te = tb.Content as ICSharpCode.AvalonEdit.TextEditor;
+            string s = te.Text;
+            var rg = new RegexTask();
+            rg.task(s, 2);
+            if (rg.regexList.Count > 0)
+            {
+                dataGridResult.ItemsSource = rg.regexList;
+            }
+            else
+            {
+                dataGridResult.ItemsSource = null;
+                MessageBox.Show("Совпадений не найдено", "Ошибка", MessageBoxButton.OK);
+            }
+        }
+
+        private void Analyzer3(object sender, RoutedEventArgs e)
+        {
+            var tb = tabCont.SelectedItem as TabItem;
+            var te = tb.Content as ICSharpCode.AvalonEdit.TextEditor;
+            string s = te.Text;
+            var rg = new RegexTask();
+            rg.task(s, 3);
+            if (rg.regexList.Count > 0)
+            {
+                dataGridResult.ItemsSource = rg.regexList;
+            }
+            else
+            {
+                dataGridResult.ItemsSource = null;
+                MessageBox.Show("Совпадений не найдено", "Ошибка", MessageBoxButton.OK);
+            }
         }
 
         private void dataGridResult_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var tb = tabCont.SelectedItem as TabItem;
             var te = tb.Content as ICSharpCode.AvalonEdit.TextEditor;
-            var pe = dataGridResult.SelectedValue as ParseError;
+            var pe = dataGridResult.SelectedValue as DGRegex;
             if (pe != null)
             {
-                int offs = pe.start;
-                int offsend = pe.end + 1;
-                for (int i = 1; i < pe.line; i++) 
-                {
-                    offs += te.Document.GetLineByNumber(i).TotalLength;
-                    offsend += te.Document.GetLineByNumber(i).TotalLength;
-                }
+                int offs = pe.line;
+                int offsend = pe.line + 1 + pe.str.Length;
                 te.Focus();
-                int j = 1;
-                while (offsend - offs < 0 && j <= pe.line)
-                    offsend += te.Document.GetLineByNumber(j++).TotalLength;
-
-                te.SelectionStart = offs - 1;
+                te.SelectionStart = offs;
                 te.SelectionLength = offsend - offs;
             }
         }
@@ -580,70 +607,16 @@ namespace Compiler
         {
             var tb = tabCont.SelectedItem as TabItem;
             var te = tb.Content as ICSharpCode.AvalonEdit.TextEditor;
-            var pe = dataGridResult.SelectedValue as ParseError;
+            var pe = dataGridResult.SelectedValue as DGRegex;
             if (pe != null)
             {
-                int offs = pe.start;
-                int offsend = pe.end + 1;
-                for (int i = 1; i < pe.line; i++)
-                {
-                    offs += te.Document.GetLineByNumber(i).TotalLength;
-                    offsend += te.Document.GetLineByNumber(i).TotalLength;
-                }
+                int offs = pe.line;
+                int offsend = pe.line + 1 + pe.str.Length;
                 te.Focus();
-
-                int j = 1;
-                while (offsend - offs < 0 && j <= pe.line)
-                    offsend += te.Document.GetLineByNumber(j++).TotalLength;
-
-                te.SelectionStart = offs - 1;
+                te.SelectionStart = offs;
                 te.SelectionLength = offsend - offs;
             }
         }
 
-    }
-    public class ColorizeAvalonEdit : DocumentColorizingTransformer
-    {
-        string text = "";
-        protected override void ColorizeLine(DocumentLine line)
-        {
-            int lineStartOffset = line.Offset;
-            text += CurrentContext.Document.GetText(line);
-            if (line.NextLine != null)
-                text += CurrentContext.Document.GetText(line);
-            else
-            {
-                int start = 0;
-                int index;
-                var parcer = new Parser();
-                parcer.Parse(text);
-                foreach (var ep in parcer.GetErrors())
-                {
-                    base.ChangeLinePart(
-                        lineStartOffset + ep.start, // startOffset
-                        lineStartOffset + ep.end, // endOffset
-                        (VisualLineElement element) =>
-                        {
-                            // This lambda gets called once for every VisualLineElement
-                            // between the specified offsets.
-                            Typeface tf = element.TextRunProperties.Typeface;
-                            TextDecoration myUnderline = new TextDecoration();
-
-                            // Create a linear gradient pen for the text decoration.
-                            Pen myPen = new Pen(Brushes.Red, 1);
-                            myPen.Thickness = 1.5;
-                            myPen.DashStyle = DashStyles.Dash;
-                            myUnderline.Pen = myPen;
-                            myUnderline.PenThicknessUnit = TextDecorationUnit.FontRecommended;
-
-                            // Set the underline decoration to a TextDecorationCollection and add it to the text block.
-                            TextDecorationCollection myCollection = new TextDecorationCollection();
-                            myCollection.Add(myUnderline);
-                            element.TextRunProperties.SetTextDecorations(myCollection);
-                            element.TextRunProperties.SetBaselineAlignment(BaselineAlignment.Center);
-                        });
-                }
-            }
-        }
     }
 }

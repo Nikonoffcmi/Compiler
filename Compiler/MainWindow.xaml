@@ -87,10 +87,16 @@
                     <fa:IconBlock Icon="Paste"></fa:IconBlock>
                 </MenuItem.Header>
             </MenuItem>
-            <MenuItem Height="20" Click="Analyzer" MaxHeight="20" ToolTip="Пуск" IsEnabled="False" Name ="RunButton">
+            <MenuItem Height="20" MaxHeight="20" ToolTip="Пуск" IsEnabled="False" Name ="RunButton">
                 <MenuItem.Header>
                     <fa:IconBlock Icon="Play"></fa:IconBlock>
                 </MenuItem.Header>
+                <MenuItem Height="20" Click="Analyzer" MaxHeight="20" Header="Задание 1" Name ="RunButton1">
+                </MenuItem>
+                <MenuItem Height="20" Click="Analyzer2" MaxHeight="20" Header="Задание 2"  Name ="RunButton2">
+                </MenuItem>
+                <MenuItem Height="20" Click="Analyzer3" MaxHeight="20" Header="Задание 3" Name ="RunButton3">
+                </MenuItem>
             </MenuItem>
             <MenuItem Height="20" MaxHeight="20" ToolTip="Справка" Click="CallHelp">
                 <MenuItem.Header>
@@ -131,11 +137,8 @@
                       GridLinesVisibility="All" FontSize="10" SelectionUnit="FullRow" 
                       SelectionChanged="dataGridResult_SelectionChanged" MouseDoubleClick="dataGridResult_MouseDoubleClick">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Номер" Binding="{Binding idx}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Описание" Binding="{Binding message}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Фрагмент" Binding="{Binding incorrStr}" Width="*"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Строка" Binding="{Binding line}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Символ" Binding="{Binding start}" Width="*"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Выражения" Binding="{Binding str}" Width="*"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Начальный символ" Binding="{Binding line}" Width="*"></DataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>
 
