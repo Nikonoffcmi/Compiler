@@ -15,7 +15,7 @@ ASSIGN – ”==” | ”<” | ”<=” | ”>” | ”>=” | ”!=”
 
 ## Язык
 
-L(G[stmt]) = { (IF epx)<sup>n</sup> ID ASSIGN exp (ELSE (IF epx | ELSE)<sup>k</sup> ID ASSIGN exp)<sup>m</sup>, n >= 0, k >= 0, m >= 0 }
+L(G[stmt]) = { (IF (TRUE | FALSE | NOT (TRUE | FALSE)) ((OR|AND) (TRUE | FALSE | NOT (TRUE | FALSE))<sup>q</sup>)<sup>n</sup> ID ASSIGN (TRUE | FALSE | NOT (TRUE | FALSE)) ((OR|AND) (TRUE | FALSE | NOT (TRUE | FALSE))<sup>w</sup> SEMICOLON (ELSE (IF (TRUE | FALSE | NOT (TRUE | FALSE)) ((OR|AND) (TRUE | FALSE | NOT (TRUE | FALSE))<sup>e</sup> | ELSE)<sup>k</sup> ID ASSIGN (TRUE | FALSE | NOT (TRUE | FALSE)) ((OR|AND) (TRUE | FALSE | NOT (TRUE | FALSE))<sup>r</sup> SEMICOLON)<sup>m</sup>, n >= 0, k >= 0, m >= 0, q >= 0, w >= 0, e >= 0, r >= 0 }
 
 ## Классификация грамматики 
 
