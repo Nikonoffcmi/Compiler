@@ -125,17 +125,9 @@
                 <ComboBoxItem Content="100"></ComboBoxItem>
             </ComboBox>
 
-            <DataGrid Name="dataGridResult" Grid.Row="2" VerticalAlignment="Top" Margin="0,5,10,30" 
-                      AutoGenerateColumns="False" IsReadOnly="True"
-                      GridLinesVisibility="All" FontSize="10" SelectionUnit="FullRow" 
-                      SelectionChanged="dataGridResult_SelectionChanged" MouseDoubleClick="dataGridResult_MouseDoubleClick" TextBlock.TextAlignment="Center">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="op" Binding="{Binding op}" Width="*"></DataGridTextColumn>
-                    <DataGridTextColumn Header="arg1" Binding="{Binding arg1}" Width="*"></DataGridTextColumn>
-                    <DataGridTextColumn Header="arg2" Binding="{Binding arg2}" Width="*"></DataGridTextColumn>
-                    <DataGridTextColumn Header="result" Binding="{Binding result}" Width="*"></DataGridTextColumn>
-                </DataGrid.Columns>
-            </DataGrid>
+            <TextBlock Name="dataGridResult" Grid.Row="2" VerticalAlignment="Top" Margin="0,5,10,30" 
+                      TextBlock.TextAlignment="Left" TextWrapping="Wrap" >
+            </TextBlock>
 
 
             <ComboBox Name="OutputFont" Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Right"

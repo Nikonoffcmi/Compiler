@@ -1,54 +1,42 @@
-# Включение семантики в анализатор. Создание внутренней формы представления программы.
-
+# Реализация метода рекурсивного спуска для синтаксического анализа.
 ## Цель
 
-Дополнить анализатор, разработанный в рамках лабораторных работ, этапом формирования внутренней формы представления программы.
+Разработать для грамматики алгоритм синтаксического анализа на основе метода рекурсивного спуска.
 
-## Вариант задания
+## Грамматика
 
-2 вариант. В качестве внутренней формы представления программы выберем тетрады. Тетрада имеет четыре поля: op, arg1, arg2 и result.
+Вариант 19
+Для грамматики G[stmt] разработать и реализовать алгоритм анализа на основе метода рекурсивного спуска.
+G[stmt]:
+1. stmt -> IF exp stmt | IF exp stmt ELSE stmt | ID ASSIGN exp SEMICOLON
+2. exp -> TRUE | FALSE | exp OR exp | exp AND exp | NOT exp | exp
+ID – переменная Б{Б|Ц}, Б – {a, b, c, ...z, A, B, …, Z}, Ц – {0, 1, …, 9}, 
+ASSIGN – ”==” | ”<” | ”<=” | ”>” | ”>=” | ”!=”
 
-Задание:
+## Язык
 
-1)Дополнить парсер грамматикой G[<АВ>]. Реализовать данную КС-граммматику методом рекурсивного спуска:
+L(G[stmt]) = { (IF epx)<sup>n</sup> ID ASSIGN exp (ELSE (IF epx | ELSE)<sup>k</sup> ID ASSIGN exp)<sup>m</sup>, n >= 0, k >= 0, m >= 0 }
 
-1. E → TA 
+## Классификация грамматики 
 
-2. A → ε | + TA | - TA 
+Согласно классификации Хомского, грамматика G[stmt] является контексто-свободной.
 
-3. T → ОВ 
-
-4. В → ε | *ОВ | /ОВ 
-
-5. О → id | (E) 
-
-2)Реализовать алгоритм записи выражений в форме тетрад.
-
-Пример допустимых строк:
-```
-a+b-c
-```
+## Пример допустимых строк:
 
 ```
-a/b*c
+IF FALSE der34 < TRUE;
 ```
 
 ```
-a-b*c+g/u
+IF FALSE der34 <= FALSE OR TRUE AND NOT FALSE ELSE der34 == TRUE;
 ```
 
 ```
-a=b*-c+q
-```
-
-```
-a=b*-c+r/-v
+IF NOT TRUE id != TRUE AND NOT TRUE ELSE id == FALSE;
 ```
 
 ## Тестовые примеры
 
-1. <p align="center"><img src="images/tetrada1.png"></p>
-1. <p align="center"><img src="images/tetrada2.png"></p>
-1. <p align="center"><img src="images/tetrada3.png"></p>
-1. <p align="center"><img src="images/tetrada4.png"></p>
-1. <p align="center"><img src="images/tetrada5.png"></p>
+1. <p align="center"><img src="images/recur1.png"></p>
+1. <p align="center"><img src="images/recur2.png"></p>
+1. <p align="center"><img src="images/recur3.png"></p>
