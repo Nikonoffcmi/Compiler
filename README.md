@@ -10,6 +10,7 @@
 G[stmt]:
 1. stmt -> IF exp stmt | IF exp stmt ELSE stmt | ID ASSIGN exp SEMICOLON
 2. exp -> TRUE | FALSE | exp OR exp | exp AND exp | NOT exp | exp
+
 ID – переменная Б{Б|Ц}, Б – {a, b, c, ...z, A, B, …, Z}, Ц – {0, 1, …, 9}, 
 ASSIGN – ”==” | ”<” | ”<=” | ”>” | ”>=” | ”!=”
 
